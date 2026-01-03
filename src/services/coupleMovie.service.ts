@@ -70,3 +70,14 @@ const ratingMovie = async (
   const movieResult = await coupleMoviesRepository.updateMovie(newMovie);
   return movieResult;
 };
+
+const getMovieWatched = async (coupleId: string, movieId: string) => {
+  const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId);
+  return movie;
+};
+
+export const coupleMovieService = {
+  markMovieWatched,
+  ratingMovie,
+  getMovieWatched,
+};
