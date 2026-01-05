@@ -52,10 +52,6 @@ const ratingMovie = async (
     throw new Error("Movie must have at least 2 ratings");
   }
 
-  if (movie.ratings.length === 0) {
-    movie.ratings = [];
-  }
-
   const newRating = {
     userId,
     rating,
