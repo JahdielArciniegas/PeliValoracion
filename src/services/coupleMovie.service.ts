@@ -1,4 +1,5 @@
 import { coupleMoviesRepository } from "../repositories/coupleMovies.repositories.js";
+import { coupleRepositories } from "../repositories/couple.repositories.js";
 import type { CoupleMovie } from "../interfaces/coupleMovie.js";
 
 const markMovieWatched = async (movie: CoupleMovie) => {
@@ -11,6 +12,12 @@ const markMovieWatched = async (movie: CoupleMovie) => {
     throw new Error("Invalid movie data");
   }
 
+  const coupleExists = await coupleRepositories.getOne(movie.coupleId);
+
+  if (!coupleExists) {
+    throw new Error("Couple not found");
+  }
+
   const movieWatched = await coupleMoviesRepository.getOneMovie(
     movie.coupleId,
     movie.movieId
@@ -21,6 +28,11 @@ const markMovieWatched = async (movie: CoupleMovie) => {
   }
 
   const result = await coupleMoviesRepository.markMovieWatched(movie);
+  if (!result) {
+    throw new Error("Error marking movie watched");
+  }
+  coupleExists.movies.push(result._id);
+  await coupleRepositories.update(coupleExists.id, coupleExists);
   return result;
 };
 
