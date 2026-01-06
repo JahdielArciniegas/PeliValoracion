@@ -3,6 +3,7 @@ import authRoutes from "./routes/user.routes.js";
 import coupleRoutes from "./routes/couple.routes.js";
 import { getConnection } from "./db/connectionMongoDB.js";
 import coupleMovieRouter from "./routes/coupleMovie.routes.js";
+import movieRouter from "./routes/movie.routes.js";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use("/api/user", authRoutes);
 app.use("/api/couple", coupleRoutes);
 app.use("/api/coupleMovie", coupleMovieRouter);
+app.use("/api/movie", movieRouter);
 
 await getConnection();
 
