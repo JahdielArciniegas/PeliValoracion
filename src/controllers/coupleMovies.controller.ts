@@ -19,8 +19,8 @@ const markMovieWatched = async (req: Request, res: Response) => {
 };
 
 const getMovieWatched = async (req: Request, res: Response) => {
-  const { coupleId } = req.query;
-  const { movieId } = req.query;
+  const coupleId = req.params.coupleId;
+  const movieId = req.params.id;
 
   try {
     const movies = await coupleMovieService.getMovieWatched(
@@ -34,7 +34,7 @@ const getMovieWatched = async (req: Request, res: Response) => {
 };
 
 const getAllMoviesWatched = async (req: Request, res: Response) => {
-  const { coupleId } = req.query;
+  const coupleId = req.params.coupleId;
 
   try {
     const movies = await coupleMovieService.getAllMoviesWatched(
@@ -48,12 +48,13 @@ const getAllMoviesWatched = async (req: Request, res: Response) => {
 
 const rateMovie = async (req: Request, res: Response) => {
   const movieId = req.params.movieId;
-  const { coupleId, rating, opinion, userId } = req.body;
+  const coupleId = req.params.coupleId;
+  const { rating, opinion, userId } = req.body;
 
   try {
     await coupleMovieService.ratingMovie(
       userId,
-      coupleId,
+      coupleId as string,
       movieId as string,
       rating,
       opinion
