@@ -27,8 +27,9 @@ const changeName = async (req: Request, res: Response) => {
     if (!id) {
       return res.status(400).json({ message: "ID is required" });
     }
-    const { fullCouple } = req.body;
-    const couple = await coupleServices.changeName(id, fullCouple);
+    const { name, users } = req.body;
+    const coupleUpdate = { name, users };
+    const couple = await coupleServices.changeName(id, coupleUpdate as any);
     res.status(200).json(couple);
   } catch (error) {
     console.log(error);
