@@ -1,11 +1,16 @@
 import { coupleRepositories } from "../repositories/couple.repositories.js";
 import type { Couple } from "../interfaces/couple.js";
 import { userRepositories } from "../repositories/user.repositories.js";
+import {
+  ValidationError,
+  NotFoundError,
+  InternalServerError,
+} from "../utils/errorHandler.js";
 
 const createAndAddUser = async (id: string) => {
   const user = await userRepositories.getOneById(id);
   if (!user) {
-    throw new Error("User not found");
+    throw new NotFoundError("User not found");
   }
 
   const couple = await coupleRepositories.create(id);
@@ -17,15 +22,15 @@ const createAndAddUser = async (id: string) => {
 const validateCouple = async (id: string, userId: string) => {
   const user = await userRepositories.getOneById(userId);
   if (!user) {
-    throw new Error("User not found");
+    throw new NotFoundError("User not found");
   }
   const couple = await coupleRepositories.getOne(id);
   if (!couple) {
-    throw new Error("Couple not found");
+    throw new NotFoundError("Couple not found");
   }
 
   if (couple.users.length === 2) {
-    throw new Error("Couple is full");
+    throw new ValidationError("Couple is full");
   }
   const validatedCouple = {
     name: couple.name,
@@ -36,7 +41,7 @@ const validateCouple = async (id: string, userId: string) => {
     validatedCouple as Couple
   );
 
-  if (!newCouple) throw new Error("Error Validated");
+  if (!newCouple) throw new InternalServerError("Error updating couple");
   user.coupleId = newCouple._id;
   await userRepositories.update(user);
   return newCouple;
@@ -44,10 +49,10 @@ const validateCouple = async (id: string, userId: string) => {
 
 const changeName = async (id: string, couple: Couple) => {
   if (couple.name === null || couple.name === undefined) {
-    throw new Error("Couple name is required");
+    throw new ValidationError("Couple name is required");
   }
   if ((couple.name as string).length < 3) {
-    throw new Error("Couple name must be at least 3 characters long");
+    throw new ValidationError("Couple name must be at least 3 characters long");
   }
   const updatedCouple = await coupleRepositories.update(id, couple);
   return updatedCouple;
