@@ -1,6 +1,6 @@
 import type { User } from "../interfaces/user.js";
 import { userRepositories } from "../repositories/user.repositories.js";
-import { ValidationError, NotFoundError } from "../utils/errorHandler.js";
+import { ValidationError, NotFoundError } from "../utils/errors.js";
 
 const create = async (name: string, email: string) => {
   if (!name || !email)

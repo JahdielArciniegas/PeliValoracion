@@ -5,7 +5,7 @@ import {
   ValidationError,
   NotFoundError,
   InternalServerError,
-} from "../utils/errorHandler.js";
+} from "../utils/errors.js";
 
 const createAndAddUser = async (id: string) => {
   const user = await userRepositories.getOneById(id);

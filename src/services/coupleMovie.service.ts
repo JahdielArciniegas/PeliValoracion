@@ -5,7 +5,7 @@ import {
   NotFoundError,
   InternalServerError,
   ValidationError,
-} from "../utils/errorHandler.js";
+} from "../utils/errors.js";
 
 const markMovieWatched = async (movie: CoupleMovie) => {
   if (
