@@ -1,6 +1,11 @@
 import { coupleMoviesRepository } from "../repositories/coupleMovies.repositories.js";
 import { coupleRepositories } from "../repositories/couple.repositories.js";
 import type { CoupleMovie } from "../interfaces/coupleMovie.js";
+import {
+  NotFoundError,
+  InternalServerError,
+  ValidationError,
+} from "../utils/errorHandler.js";
 
 const markMovieWatched = async (movie: CoupleMovie) => {
   if (
@@ -9,13 +14,13 @@ const markMovieWatched = async (movie: CoupleMovie) => {
     !movie.movieName ||
     !movie.moviePoster
   ) {
-    throw new Error("Invalid movie data");
+    throw new ValidationError("Invalid movie data");
   }
 
   const coupleExists = await coupleRepositories.getOne(movie.coupleId);
 
   if (!coupleExists) {
-    throw new Error("Couple not found");
+    throw new NotFoundError("Couple not found");
   }
 
   const movieWatched = await coupleMoviesRepository.getOneMovie(
@@ -24,12 +29,12 @@ const markMovieWatched = async (movie: CoupleMovie) => {
   );
 
   if (movieWatched) {
-    throw new Error("Movie already watched");
+    throw new ValidationError("Movie already watched");
   }
 
   const result = await coupleMoviesRepository.markMovieWatched(movie);
   if (!result) {
-    throw new Error("Error marking movie watched");
+    throw new InternalServerError("Error marking movie watched");
   }
   coupleExists.movies.push(result._id);
   await coupleRepositories.update(coupleExists.id, coupleExists);
@@ -45,23 +50,23 @@ const ratingMovie = async (
 ) => {
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId);
   if (!movie) {
-    throw new Error("Movie not found");
+    throw new NotFoundError("Movie not found");
   }
 
   if (movie.ratings.some((rating) => rating.userId === userId)) {
-    throw new Error("User already rated this movie");
+    throw new ValidationError("User already rated this movie");
   }
 
   if (!userId || !coupleId || !movieId || !rating || !opinion) {
-    throw new Error("Invalid rating data");
+    throw new ValidationError("Invalid rating data");
   }
 
   if (rating < 1 || rating > 10) {
-    throw new Error("Rating must be between 1 and 10");
+    throw new ValidationError("Rating must be between 1 and 10");
   }
 
-  if (movie.ratings.length < 2) {
-    throw new Error("Movie must have at least 2 ratings");
+  if (movie.ratings.length >= 2) {
+    throw new ValidationError("Movie must have at least 2 ratings");
   }
 
   const newRating = {
