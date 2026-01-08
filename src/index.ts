@@ -4,6 +4,7 @@ import coupleRoutes from "./routes/couple.routes.js";
 import { getConnection } from "./db/connectionMongoDB.js";
 import coupleMovieRouter from "./routes/coupleMovie.routes.js";
 import movieRouter from "./routes/movie.routes.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use("/api/user", authRoutes);
 app.use("/api/couple", coupleRoutes);
 app.use("/api/coupleMovie", coupleMovieRouter);
 app.use("/api/movie", movieRouter);
-
+app.use(errorHandler);
 await getConnection();
 
 app.listen(3003, () => {

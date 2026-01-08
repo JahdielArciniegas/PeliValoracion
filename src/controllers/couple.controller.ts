@@ -1,27 +1,35 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { coupleServices } from "../services/couple.service.js";
 
-const createCouple = async (req: Request, res: Response) => {
+const createCouple = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.body;
     const couple = await coupleServices.createAndAddUser(id);
     res.status(201).json(couple);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const validateCouple = async (req: Request, res: Response) => {
+const validateCouple = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id, userId } = req.body;
     const couple = await coupleServices.validateCouple(id, userId);
     res.status(200).json(couple);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const changeName = async (req: Request, res: Response) => {
+const changeName = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -32,11 +40,15 @@ const changeName = async (req: Request, res: Response) => {
     const couple = await coupleServices.changeName(id, coupleUpdate as any);
     res.status(200).json(couple);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const getOneCouple = async (req: Request, res: Response) => {
+const getOneCouple = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -45,11 +57,15 @@ const getOneCouple = async (req: Request, res: Response) => {
     const couple = await coupleServices.getOneCouple(id);
     res.status(200).json(couple);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const removeCouple = async (req: Request, res: Response) => {
+const removeCouple = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -58,7 +74,7 @@ const removeCouple = async (req: Request, res: Response) => {
     const couple = await coupleServices.removeCouple(id);
     res.status(204).json(couple);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
