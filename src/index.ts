@@ -9,6 +9,8 @@ import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 
 app.use(express.json());
+app.set("view engine", "ejs");
+app.set("views", "./src/view");
 
 app.use("/api/user", authRoutes);
 app.use("/api/couple", coupleRoutes);
