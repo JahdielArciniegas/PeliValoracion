@@ -1,7 +1,11 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { coupleMovieService } from "../services/coupleMovie.service.js";
 
-const markMovieWatched = async (req: Request, res: Response) => {
+const markMovieWatched = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { coupleId, movieId, movieName, moviePoster } = req.body;
 
   try {
@@ -14,11 +18,15 @@ const markMovieWatched = async (req: Request, res: Response) => {
     });
     res.status(200).json({ message: "Movie marked as watched" });
   } catch (error) {
-    res.status(500).json({ error: "Error marking movie as watched" });
+    next(error);
   }
 };
 
-const getMovieWatched = async (req: Request, res: Response) => {
+const getMovieWatched = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const coupleId = req.params.coupleId;
   const movieId = req.params.id;
 
@@ -29,11 +37,15 @@ const getMovieWatched = async (req: Request, res: Response) => {
     );
     res.status(200).json(movies);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching watched movies" });
+    next(error);
   }
 };
 
-const getAllMoviesWatched = async (req: Request, res: Response) => {
+const getAllMoviesWatched = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const coupleId = req.params.coupleId;
 
   try {
@@ -42,11 +54,11 @@ const getAllMoviesWatched = async (req: Request, res: Response) => {
     );
     res.status(200).json(movies);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching all watched movies" });
+    next(error);
   }
 };
 
-const rateMovie = async (req: Request, res: Response) => {
+const rateMovie = async (req: Request, res: Response, next: NextFunction) => {
   const movieId = req.params.movieId;
   const coupleId = req.params.coupleId;
   const { rating, opinion, userId } = req.body;
@@ -61,7 +73,7 @@ const rateMovie = async (req: Request, res: Response) => {
     );
     res.status(200).json({ message: "Movie rated successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Error rating movie" });
+    next(error);
   }
 };
 

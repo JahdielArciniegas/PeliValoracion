@@ -1,27 +1,27 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { userService } from "../services/user.service.js";
 
-const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = req.body;
     const user = await userService.getOne(email);
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, email } = req.body;
     const user = await userService.create(name, email);
     res.status(201).json(user);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const update = async (req: Request, res: Response) => {
+const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -31,11 +31,11 @@ const update = async (req: Request, res: Response) => {
     const userUpdate = await userService.update(id, { email, name, coupleId });
     res.status(200).json(userUpdate);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-const remove = async (req: Request, res: Response) => {
+const remove = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -44,7 +44,7 @@ const remove = async (req: Request, res: Response) => {
     const userRemove = await userService.remove(id);
     res.status(204).json(userRemove);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 

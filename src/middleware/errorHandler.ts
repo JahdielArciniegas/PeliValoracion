@@ -1,11 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import {
-  ForbiddenError,
-  InternalServerError,
-  NotFoundError,
-  UnauthorizedError,
-  ValidationError,
-} from "../utils/errors.js";
 
 export default function errorHandler(
   err: Error,
@@ -13,23 +6,24 @@ export default function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  if (err instanceof ValidationError) {
+  console.log(err);
+  if (err.name === "ValidationError") {
     return res.status(400).json({ message: err.message });
   }
 
-  if (err instanceof NotFoundError) {
+  if (err.name === "NotFoundError") {
     return res.status(404).json({ message: err.message });
   }
 
-  if (err instanceof UnauthorizedError) {
+  if (err.name === "UnauthorizedError") {
     return res.status(401).json({ message: err.message });
   }
 
-  if (err instanceof ForbiddenError) {
+  if (err.name === "ForbiddenError") {
     return res.status(403).json({ message: err.message });
   }
 
-  if (err instanceof InternalServerError) {
+  if (err.name === "InternalServerError") {
     return res.status(500).json({ message: err.message });
   }
 }
