@@ -1,6 +1,12 @@
+import { JWT_SECRET } from "../config/dotenv.js";
 import type { User } from "../interfaces/user.js";
 import { userRepositories } from "../repositories/user.repositories.js";
-import { ValidationError, NotFoundError } from "../utils/errors.js";
+import jwt from "jsonwebtoken";
+import {
+  ValidationError,
+  NotFoundError,
+  InternalServerError,
+} from "../utils/errors.js";
 
 const create = async (name: string, email: string) => {
   if (!name || !email)
@@ -21,7 +27,15 @@ const getOne = async (email: string) => {
   if (!email) throw new ValidationError("Email is required");
   const user = await userRepositories.getOneByEmail(email);
   if (!user) throw new NotFoundError("User not found");
-  return user;
+  const userToken = {
+    id: user.id,
+    name: user.name,
+    coupleId: user.coupleId,
+  };
+  if (!JWT_SECRET) throw new InternalServerError("JWT secret not found");
+
+  const token = jwt.sign({ user: userToken }, JWT_SECRET, { expiresIn: "1h" });
+  return { user, token };
 };
 
 const update = async (id: string, user: User) => {

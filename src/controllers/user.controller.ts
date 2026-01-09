@@ -4,8 +4,15 @@ import { userService } from "../services/user.service.js";
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = req.body;
-    const user = await userService.getOne(email);
-    res.status(200).json(user);
+    const { user, token } = await userService.getOne(email);
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      })
+      .status(200)
+      .json(user);
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,6 @@
 /node_modules
+/src/view
 .env
 .http
+
 *.log
