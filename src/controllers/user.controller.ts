@@ -3,8 +3,9 @@ import { userService } from "../services/user.service.js";
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const { user: currentUser } = req.session;
     const { email } = req.body;
-    const { user, token } = await userService.getOne(email);
+    const { user, token } = await userService.getOne(email, currentUser?.id);
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -20,8 +21,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const { user: currentUser } = req.session;
     const { name, email } = req.body;
-    const user = await userService.create(name, email);
+    const user = await userService.create(name, email, currentUser?.id);
     res.status(201).json(user);
   } catch (error) {
     next(error);
@@ -30,12 +32,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      return res.status(400).json({ message: "Id is required" });
-    }
+    const { user: currentUser } = req.session;
     const { email, name, coupleId } = req.body;
-    const userUpdate = await userService.update(id, { email, name, coupleId });
+    const userUpdate = await userService.update(currentUser?.id, {
+      email,
+      name,
+      coupleId,
+    });
     res.status(200).json(userUpdate);
   } catch (error) {
     next(error);
@@ -44,11 +47,8 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
 
 const remove = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: "Id is required" });
-    }
-    const userRemove = await userService.remove(id);
+    const { user: currentUser } = req.session;
+    const userRemove = await userService.remove(currentUser?.id);
     res.status(204).json(userRemove);
   } catch (error) {
     next(error);
