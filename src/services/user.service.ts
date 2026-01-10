@@ -6,9 +6,17 @@ import {
   ValidationError,
   NotFoundError,
   InternalServerError,
+  UnauthorizedError,
 } from "../utils/errors.js";
 
-const create = async (name: string, email: string) => {
+const create = async (
+  name: string,
+  email: string,
+  idSession: string | undefined
+) => {
+  if (idSession) {
+    throw new ValidationError("User should not have a session");
+  }
   if (!name || !email)
     throw new ValidationError("User name and email are required");
   const coupleId = "";
@@ -23,7 +31,10 @@ const create = async (name: string, email: string) => {
   return userCreate;
 };
 
-const getOne = async (email: string) => {
+const getOne = async (email: string, idSession: string | undefined) => {
+  if (idSession) {
+    throw new ValidationError("User should not have a session");
+  }
   if (!email) throw new ValidationError("Email is required");
   const user = await userRepositories.getOneByEmail(email);
   if (!user) throw new NotFoundError("User not found");
@@ -38,7 +49,8 @@ const getOne = async (email: string) => {
   return { user, token };
 };
 
-const update = async (id: string, user: User) => {
+const update = async (id: string | undefined, user: User) => {
+  if (!id) throw new UnauthorizedError("Id is required for update");
   if (!user.email) throw new ValidationError("Email is required");
   const userExist = await userRepositories.getOneById(id);
   if (!userExist) throw new NotFoundError("User not found");
@@ -53,8 +65,8 @@ const update = async (id: string, user: User) => {
   return userUpdate;
 };
 
-const remove = async (id: string) => {
-  if (!id) throw new ValidationError("Id is required");
+const remove = async (id: string | undefined) => {
+  if (!id) throw new UnauthorizedError("Id is required for remove");
   const userExist = await userRepositories.getOneById(id);
   if (!userExist) throw new NotFoundError("User not found");
   const userRemove = await userRepositories.remove(id);
