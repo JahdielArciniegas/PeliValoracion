@@ -5,13 +5,14 @@ import { getConnection } from "./db/connectionMongoDB.js";
 import coupleMovieRouter from "./routes/coupleMovie.routes.js";
 import movieRouter from "./routes/movie.routes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import verifyToken from "./middleware/verifyToken.js";
 
 const app = express();
 
 app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", "./src/view");
-
+app.use(verifyToken);
 app.use("/api/user", authRoutes);
 app.use("/api/couple", coupleRoutes);
 app.use("/api/coupleMovie", coupleMovieRouter);
