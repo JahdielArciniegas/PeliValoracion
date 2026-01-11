@@ -6,17 +6,21 @@ import coupleMovieRouter from "./routes/coupleMovie.routes.js";
 import movieRouter from "./routes/movie.routes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import verifyToken from "./middleware/verifyToken.js";
+import viewsRoutes from "./routes/views.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", "./src/view");
+app.use(cookieParser());
 app.use(verifyToken);
 app.use("/api/user", authRoutes);
 app.use("/api/couple", coupleRoutes);
 app.use("/api/coupleMovie", coupleMovieRouter);
 app.use("/api/movie", movieRouter);
+app.use("/", viewsRoutes);
 app.use(errorHandler);
 await getConnection();
 

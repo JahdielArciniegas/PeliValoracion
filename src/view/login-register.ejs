@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación</title>
+    <style>
+        /* --- ESTILOS INCRUSTADOS (Mismo tema índigo) --- */
+        :root {
+            --primary-color: #4f46e5; /* Índigo Principal */
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --gray-light: #e5e7eb;
+            --gray-text: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        /* --- Pestañas (Tabs) --- */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: -2px;
+        }
+
+        /* --- Formularios --- */
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Clase para ocultar elementos */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <% if (session.user) { %>
+        <div class="auth-container">
+            <h2>El usuario ya esta loggueado</h2>
+            <button class="btn-submit" onclick="window.location.href='/home'">Ir al dashboard</button>
+        </div>
+    <% } else { %>
+    <div class="auth-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'login')">Ingresar</button>
+            <button class="tab-btn" onclick="openTab(event, 'register')">Registrarse</button>
+        </div>
+
+        <form id="login-form" action="/login" method="POST">
+            <div class="form-group">
+                <label for="login-email">Correo Electrónico</label>
+                <input type="email" id="login-email" name="email" placeholder="tucorreo@ejemplo.com" required>
+            </div>
+            <button type="submit" class="btn-submit">Entrar</button>
+        </form>
+
+        <form id="register-form" action="/register" method="POST" class="hidden">
+            <div class="form-group">
+                <label for="reg-username">Nombre de usuario</label>
+                <input type="text" id="reg-username" name="username" placeholder="Elige un usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reg-email">Correo Electrónico</label>
+                <input type="email" id="reg-email" name="email" placeholder="tucorreo@ejemplo.com" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">Crear Cuenta</button>
+        </form>
+    </div>
+    <% } %>
+
+    <script>
+
+        function openTab(evt, tabName) {
+            // 1. Ocultar todos los formularios
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.add('hidden');
+
+            // 2. Quitar la clase 'active' de todos los botones de pestaña
+            const tabLinks = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove('active');
+            }
+
+            // 3. Mostrar el formulario actual y activar el botón clickeado
+            document.getElementById(tabName + '-form').classList.remove('hidden');
+            evt.currentTarget.classList.add('active');
+            
+
+        }
+
+        // Registro
+            const registerForm = document.getElementById('register-form');
+            if(registerForm) {
+                registerForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    // Aqui se podria agregar logica para el registro
+                    const formData = new FormData(registerForm)
+                    const name = formData.get('username')
+                    const email = formData.get('email')
+                    const res = await fetch('api/user/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name,
+                            email
+                        })
+                    })
+
+                    const data = await res.json()
+                    document.getElementById('register-form').innerHTML = `<p>${data.message}</p>`
+
+                    if(res.ok){
+                        location.reload();
+                    }
+
+                });
+            }
+
+        // Login
+        const loginForm = document.getElementById('login-form');
+        if(loginForm) {
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                // Aqui se podria agregar logica para el login
+                const formData = new FormData(loginForm)
+                const email = formData.get('email')
+
+                const res = await fetch('api/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email
+                    })
+                })
+
+                const data = await res.json()
+                document.getElementById('login-form').innerHTML = `<p>${data.message}</p>`
+
+                if(res.ok){
+                    location.href = '/home';
+                }
+
+            });
+        }
+    </script>
+</body>
+</html>
