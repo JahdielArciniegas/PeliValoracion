@@ -7,10 +7,19 @@ import {
   InternalServerError,
 } from "../utils/errors.js";
 
-const createAndAddUser = async (id: string) => {
+const getCode = async (id: string) => {
   const user = await userRepositories.getOneById(id);
   if (!user) {
     throw new NotFoundError("User not found");
+  }
+  if (user.coupleId) {
+    const coupleExist = await coupleRepositories.getOne(
+      user.coupleId.toString()
+    );
+    if (coupleExist?.users.length === 2) {
+      throw new ValidationError("User already has a couple");
+    }
+    return coupleExist;
   }
 
   const couple = await coupleRepositories.create(id);
@@ -69,7 +78,7 @@ const getOneCouple = async (id: string) => {
 };
 
 export const coupleServices = {
-  createAndAddUser,
+  getCode,
   validateCouple,
   changeName,
   removeCouple,
