@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 import { coupleServices } from "../services/couple.service.js";
 
-const createCouple = async (
+const getCoupleCode = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { id } = req.body;
-    const couple = await coupleServices.createAndAddUser(id);
+    const couple = await coupleServices.getCode(id);
     res.status(201).json(couple);
   } catch (error) {
     next(error);
@@ -79,7 +79,7 @@ const removeCouple = async (
 };
 
 export const coupleControllers = {
-  createCouple,
+  getCoupleCode,
   validateCouple,
   changeName,
   getOneCouple,

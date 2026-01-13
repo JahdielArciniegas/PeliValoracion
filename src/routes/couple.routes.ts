@@ -3,7 +3,7 @@ import express from "express";
 
 const coupleRouter = express.Router();
 
-coupleRouter.post("/getCode", coupleControllers.createCouple);
+coupleRouter.post("/getCode", coupleControllers.getCoupleCode);
 coupleRouter.put("/validate", coupleControllers.validateCouple);
 coupleRouter.put("/:id", coupleControllers.changeName);
 coupleRouter.get("/:id", coupleControllers.getOneCouple);
