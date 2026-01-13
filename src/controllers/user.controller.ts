@@ -30,6 +30,17 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "Logout successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user: currentUser } = req.session;
@@ -55,4 +66,4 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const authController = { login, register, update, remove };
+export const authController = { login, logout, register, update, remove };
