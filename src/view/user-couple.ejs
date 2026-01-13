@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <style>
+        /* --- ESTILOS INCRUSTADOS (Mismo tema índigo) --- */
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --gray-light: #e5e7eb;
+            --gray-text: #6b7280;
+            --code-bg: #eef2ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Cambiado a min-height para evitar cortes si crece */
+            margin: 0;
+        }
+
+        .auth-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* --- Pestañas (Tabs) --- */
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: -2px;
+        }
+
+        /* --- Estilos Generales --- */
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* --- Estilos Específicos de Perfil --- */
+        .profile-section {
+            text-align: left;
+        }
+
+        .info-label {
+            color: var(--gray-text);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-color);
+            margin-bottom: 1rem;
+        }
+
+        .partner-badge {
+            display: inline-block;
+            background-color: var(--code-bg);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* --- Estilos para Fase de Código --- */
+        .code-display {
+            background-color: var(--code-bg);
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px dashed var(--primary-color);
+            cursor: pointer; /* Sugiere que se puede copiar */
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--gray-text);
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <% if (!session.user.user) { %>
+    <div class="auth-container">
+            <h2>El usuario no esta loggueado</h2>
+            <button class="btn-submit" onclick="window.location.href='/'">Ir a Login</button>
+        </div>
+    <% } else { %>
+        <div class="auth-container">
+        <div class="tabs">
+            <input type="hidden" id="userId" value="<%= session.user.user.id %>">
+            <button class="tab-btn active" onclick="openTab(event, 'info')">Mi Perfil</button>
+            <button class="tab-btn" onclick="openTab(event, 'link')">Vincular</button>
+        </div>
+
+        <div id="info-content" class="profile-section">
+            <div class="info-label">Nombre de usuario</div>
+            <div class="info-value">
+                <%= session.user.user.name %>
+            </div>
+
+            <div class="info-label">Pareja Actual</div>
+            <div class="info-value" style="border: none;">
+                <% if (session.user.user.coupleId !== '') { %>
+                    <span class="partner-badge">❤️ <%= session.user.user.coupleId %></span>
+                <% } else { %>
+                    <span style="color: var(--gray-text); font-style: italic;">Sin vincular</span>
+                <% } %>
+            </div>
+            
+            <form id="logoutForm" style="margin-top: 1rem;">
+                <button type="submit" class="btn-submit" style="background-color: #ef4444;">Cerrar Sesión</button>
+            </form>
+        </div>
+
+        <div id="link-content" class="hidden">
+            
+            <form id="getCodeForm">
+                <div class="form-group">
+                    <label for="partnerCode">Crea un codigo de pareja</label>
+                    <div class="info-value" id="coupleCode"><% if (session.user.user.coupleId !== '') { %><%= session.user.user.coupleId %><% } else { %><% } %></div>
+                </div>
+                <button type="submit" onclick="getCode(event)" class="btn-submit">Crear Código</button>
+            </form>
+
+            <div class="divider">
+                <span>O INTRODUCE UNO</span>
+            </div>
+
+            <form id="validateCodeForm">
+                <div class="form-group">
+                    <label for="partnerCode">Código de tu pareja</label>
+                    <input type="text" id="partnerCode" name="partnerCode" placeholder="Ej. X9Z-2A" required style="text-transform: uppercase; letter-spacing: 2px;">
+                </div>
+                <button type="submit" class="btn-submit">Vincular Pareja</button>
+            </form>
+        </div>
+
+    </div>
+    <% } %>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Ocultar contenidos
+            document.getElementById('info-content').classList.add('hidden');
+            document.getElementById('link-content').classList.add('hidden');
+
+            // Resetear botones
+            const tabLinks = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove('active');
+            }
+
+            // Mostrar contenido y activar botón
+            document.getElementById(tabName + '-content').classList.remove('hidden');
+            evt.currentTarget.classList.add('active');
+        }
+
+        const userId = document.getElementById('userId').value
+        
+        const validateCodeForm = document.getElementById('validateCodeForm');
+        validateCodeForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const partnerCode = document.getElementById('partnerCode').value;
+            const response = await fetch('/api/couple/validate', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: userId, id: partnerCode })
+            });
+            const data = await response.json();
+            console.log(data);
+        });
+
+        const logoutForm = document.getElementById("logoutForm")
+        logoutForm.addEventListener('submit', async(event) => {
+            event.preventDefault();
+            const response = await fetch('/api/user/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            location.href = '/';
+        })
+
+        async function getCode(event) {
+            event.preventDefault();
+            const response = await fetch('/api/couple/getCode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: userId })
+            });
+            const data = await response.json();
+            console.log(data);
+            document.querySelector('#coupleCode').textContent = data.id;
+        }
+
+        
+    </script>
+</body>
+</html>
