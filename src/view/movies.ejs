@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartelera de Películas</title>
+    <style>
+        /* --- ESTILOS (Mismo tema índigo que el Login/Perfil) --- */
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --gray-light: #e5e7eb;
+            --gray-text: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+        .main-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px; /* Ancho para cartelera */
+            text-align: center;
+        }
+
+        /* --- Buscador --- */
+        .search-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-search {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-search:hover { background-color: var(--primary-hover); }
+
+        /* --- Pestañas (Categorías) --- */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--gray-light);
+            justify-content: space-around;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover { color: var(--primary-color); }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* --- Grilla de Películas --- */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            text-align: left;
+            min-height: 200px; /* Evita colapso si está cargando */
+        }
+
+        .movie-card {
+            background: white;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 270px;
+            background-color: #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 0.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .movie-title {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+            /* Limitar a 2 lineas */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .movie-meta {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rating-badge {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Estados de carga */
+        .loading, .error {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--gray-text);
+            padding: 2rem;
+            font-style: italic;
+        }
+        .error { color: #ef4444; }
+
+        /* ... Tus estilos anteriores ... */
+
+.movie-poster {
+    /* Necesario para posicionar la capa encima */
+    position: relative; 
+    width: 100%;
+    height: 270px;
+    background-color: #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* La capa oscura oculta */
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente oscuro */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Invisible por defecto */
+    transition: opacity 0.3s ease;
+    gap: 10px;
+}
+
+/* Al pasar el mouse sobre la TARJETA, mostramos la capa del poster */
+.movie-card:hover .card-overlay {
+    opacity: 1;
+}
+
+/* Botón dentro del overlay */
+.btn-overlay {
+    padding: 0.6rem 1.2rem;
+    background-color: white;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transform: translateY(20px); /* Efecto de entrada */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn-overlay:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Pequeña animación: el botón sube al aparecer */
+.movie-card:hover .btn-overlay {
+    transform: translateY(0);
+}
+    </style>
+</head>
+<body>
+
+    <input type="text" style="display: none;" id="coupleId" value="<%= session.user.user.coupleId %>">
+    <div class="main-container">
+        
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Buscar película (Enter)...">
+            <button class="btn-search" onclick="performSearch()">Buscar</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="loadCategory('nowplaying', this)">En Cartelera</button>
+            <button class="tab-btn" onclick="loadCategory('popular', this)">Populares</button>
+            <button class="tab-btn" onclick="loadCategory('toprated', this)">Mejor Valoradas</button>
+        </div>
+
+        <div id="grid" class="movies-grid">
+            </div>
+
+    </div>
+
+    <script>
+        // URL base de tu router (ajusta si tus rutas tienen prefijo, ej: '/api')
+        const BASE_URL = 'api/movie'; 
+
+        // Al cargar la página, mostramos "En Cartelera" por defecto
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategory('nowplaying', document.querySelector('.tab-btn.active'));
+        });
+
+        // Función para cambiar de categoría
+        function loadCategory(endpoint, btnElement) {
+            // 1. Actualizar Tabs Visualmente
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            // 2. Llamar a la API
+            fetchMovies(endpoint);
+        }
+
+        // Función de búsqueda
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            // Desactivar tabs visualmente porque estamos buscando
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Usar tu endpoint: /search/:query
+            fetchMovies(`search/${query}`);
+        }
+
+        // Permitir buscar al presionar Enter
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        // Lógica Principal de Fetch y Renderizado
+        async function fetchMovies(endpoint) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '<div class="loading">Cargando películas...</div>';
+
+            try {
+                // Hacemos la petición a tus rutas: /nowplaying, /search/batman, etc.
+                const response = await fetch(`${BASE_URL}/${endpoint}`);
+                
+                if (!response.ok) throw new Error('Error en la red');
+
+                const data = await response.json();
+                
+                // NOTA: Asumo que tus endpoints devuelven { results: [...] } o un array directo [...]
+                // Ajusta esta línea según la respuesta real de tu backend:
+                const movies = data.results || data; 
+
+                renderGrid(movies);
+
+            } catch (error) {
+                console.error(error);
+                grid.innerHTML = '<div class="error">Ocurrió un error al cargar las películas.</div>';
+            }
+        }
+
+        // Función para pintar el HTML
+        function renderGrid(movies) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = ''; 
+
+    if (!movies || movies.length === 0) {
+        grid.innerHTML = '<div class="loading">No se encontraron resultados.</div>';
+        return;
+    }
+
+    movies.forEach(movie => {
+        const imageUrl = movie.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+            : null; 
+
+        const movieData = encodeURIComponent(JSON.stringify({
+            movieId: movie.id,
+            movieName: movie.title,
+            moviePoster: movie.poster_path
+        }));
+
+
+        const cardHTML = `
+            <div class="movie-card">
+                <div class="movie-poster">
+                    ${imageUrl 
+                        ? `<img src="${imageUrl}" alt="${movie.title}">` 
+                        : '<span style="color:#4f46e5; font-weight:bold;">Sin Imagen</span>'
+                    }
+                    
+                    <div class="card-overlay">
+                        <button class="btn-overlay" onclick="markAsSeen(event, '${movieData}')">
+                            👁️ Marcar Vista
+                        </button>
+                    </div>
+                </div>
+
+                <div class="movie-info">
+                    <div class="movie-title">${movie.title}</div>
+                    <div class="movie-meta">
+                        <span>${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</span>
+                        <span class="rating-badge">★ ${movie.vote_average || '-'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
+
+// Nueva función para manejar el click del botón
+async function markAsSeen(event, movie) {
+    event.stopPropagation(); // Evita que se dispare el click de la tarjeta
+    event.preventDefault(); // Previene comportamientos extraños
+    const coupleId = document.getElementById('coupleId').value;
+    // Aquí puedes hacer un fetch a tu backend para guardar
+    const movieObj = JSON.parse(decodeURIComponent(movie))
+    console.log(movieObj);
+    const response = await fetch('/api/coupleMovie', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            coupleId: coupleId,
+            movieId: movieObj.movieId,
+            movieName: movieObj.movieName,
+            moviePoster: movieObj.moviePoster
+        })
+    });
+    console.log(response);
+    
+    // Feedback visual simple (cambia el texto del botón temporalmente)
+    const btn = event.target;
+    const originalText = btn.innerText;
+    
+    btn.style.backgroundColor = '#10b981'; // Verde éxito
+    btn.style.color = 'white';
+    btn.innerText = '✓ Guardado';
+    
+    setTimeout(() => {
+        btn.style.backgroundColor = 'white';
+        btn.style.color = 'var(--primary-color)';
+        btn.innerText = originalText;
+    }, 2000);
+}
+    </script>
+</body>
+</html>

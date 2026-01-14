@@ -5,5 +5,6 @@ const viewsRoutes = express.Router();
 
 viewsRoutes.get("/", viewsController.loginRegister);
 viewsRoutes.get("/home", viewsController.userCouple);
+viewsRoutes.get("/movies", viewsController.movies);
 
 export default viewsRoutes;
