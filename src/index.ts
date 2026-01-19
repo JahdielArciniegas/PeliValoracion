@@ -8,9 +8,11 @@ import errorHandler from "./middleware/errorHandler.js";
 import verifyToken from "./middleware/verifyToken.js";
 import viewsRoutes from "./routes/views.routes.js";
 import cookieParser from "cookie-parser";
+import rateLimiter from "./middleware/rateLimiting.js";
 
 const app = express();
 
+app.use(rateLimiter);
 app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", "./src/view");
