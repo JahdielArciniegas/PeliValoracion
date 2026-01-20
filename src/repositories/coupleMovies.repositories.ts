@@ -1,4 +1,4 @@
-import CoupleMovie from "../schema/coupleMovie.js";
+import CoupleMovie from "../models/coupleMovie.js";
 import type { CoupleMovie as CoupleMovieInterface } from "../interfaces/coupleMovie.js";
 
 const markMovieWatched = async (movie: CoupleMovieInterface) => {

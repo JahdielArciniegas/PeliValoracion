@@ -1,5 +1,5 @@
 import type { Couple as CoupleInterface } from "../interfaces/couple.js";
-import Couple from "../schema/couple.js";
+import Couple from "../models/couple.js";
 
 const create = async (id: string) => {
   const newCouple = new Couple({
