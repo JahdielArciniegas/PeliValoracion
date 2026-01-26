@@ -4,9 +4,8 @@ export default function errorHandler(
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
-  console.log(err);
   if (err.name === "ValidationError") {
     return res.status(400).json({ message: err.message });
   }
