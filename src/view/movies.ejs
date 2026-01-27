@@ -392,7 +392,6 @@ async function markAsSeen(event, movie) {
     const coupleId = document.getElementById('coupleId').value;
     // Aquí puedes hacer un fetch a tu backend para guardar
     const movieObj = JSON.parse(decodeURIComponent(movie))
-    console.log(movieObj);
     const response = await fetch('/api/coupleMovie', {
         method: 'POST',
         headers: {
@@ -405,7 +404,6 @@ async function markAsSeen(event, movie) {
             moviePoster: movieObj.moviePoster
         })
     });
-    console.log(response);
     
     // Feedback visual simple (cambia el texto del botón temporalmente)
     const btn = event.target;
