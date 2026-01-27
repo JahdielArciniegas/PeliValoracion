@@ -1,0 +1,27 @@
+import express from "express";
+import authRoutes from "./routes/user.routes.js";
+import coupleRoutes from "./routes/couple.routes.js";
+
+import coupleMovieRouter from "./routes/coupleMovie.routes.js";
+import movieRouter from "./routes/movie.routes.js";
+import errorHandler from "./middleware/errorHandler.js";
+import verifyToken from "./middleware/verifyToken.js";
+import viewsRoutes from "./routes/views.routes.js";
+import cookieParser from "cookie-parser";
+import rateLimiter from "./middleware/rateLimiting.js";
+const app = express();
+
+app.use(rateLimiter);
+app.use(express.json());
+app.set("view engine", "ejs");
+app.set("views", "./src/view");
+app.use(cookieParser());
+app.use(verifyToken);
+app.use("/api/user", authRoutes);
+app.use("/api/couple", coupleRoutes);
+app.use("/api/coupleMovie", coupleMovieRouter);
+app.use("/api/movie", movieRouter);
+app.use("/", viewsRoutes);
+app.use(errorHandler);
+
+export default app;
