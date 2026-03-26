@@ -23,7 +23,7 @@ const getOneMovie = async (coupleId: string, movieId: string) => {
 };
 
 const updateMovie = async (movie: CoupleMovieInterface) => {
-  const result = await CoupleMovie.findByIdAndUpdate(movie.id, movie, {
+  const result = await CoupleMovie.findOneAndUpdate({movieId: movie.movieId, coupleId: movie.coupleId}, movie, {
     new: true,
   });
   return result;
