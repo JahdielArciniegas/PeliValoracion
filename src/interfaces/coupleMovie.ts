@@ -10,5 +10,5 @@ export interface CoupleMovie {
   movieId: string;
   movieName: string;
   moviePoster: string;
-  ratings: UserRating[];
+  rating: UserRating[];
 }
