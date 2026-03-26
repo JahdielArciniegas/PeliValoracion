@@ -24,6 +24,6 @@ export const coupleMovieRateSchema = z.object({
   body: ratingSchema,
   params: z.object({
     idcouple: z.string(),
-    idmovie: z.string(),
+    movieId: z.string(),
   }),
 });
