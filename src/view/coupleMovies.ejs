@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Películas de la Pareja</title>
+    <style>
+        /* --- ESTILOS EN BASE A LA APLICACIÓN INICIAL --- */
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --gray-light: #e5e7eb;
+            --gray-text: #6b7280;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+        .main-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
+        h2.title {
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+        /* --- Estructura de la Grilla de Películas --- */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            text-align: left;
+            min-height: 200px; 
+        }
+        .movie-card {
+            background: white;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none; 
+            color: inherit;
+        }
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+        .movie-poster {
+            position: relative;
+            width: 100%;
+            height: 270px;
+            background-color: #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .movie-info {
+            padding: 0.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .movie-title {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .rating-badge {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        .loading, .error, .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--gray-text);
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        .error { color: #ef4444; }
+        /* Botón estilo Overlay para inducción a calificar */
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .movie-card:hover .card-overlay {
+            opacity: 1;
+        }
+        .btn-overlay {
+            padding: 0.6rem 1.2rem;
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        .movie-card:hover .btn-overlay {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Input oculto para exponer el valor de idCouple al cliente web -->
+    <input type="hidden" id="coupleId" value="<%= session.user.user.coupleId %>">
+    
+    <div class="main-container">
+        <h2 class="title">Tus Películas en Pareja 🍿❤️</h2>
+        
+        <!-- Contenedor donde se insertarán las películas iteradas de la API -->
+        <div id="grid" class="movies-grid">
+            <div class="loading">Cargando las películas marcadas...</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCoupleMovies();
+        });
+        async function fetchCoupleMovies() {
+            const grid = document.getElementById('grid');
+            const coupleId = document.getElementById('coupleId').value;
+            if (!coupleId) {
+                grid.innerHTML = '<div class="error">Se debe vincular una pareja para ver la lista de películas.</div>';
+                return;
+            }
+            try {
+                // Se invoca al endpoint /api/coupleMovie para ver la lista completa
+                const response = await fetch(`/api/coupleMovie/${coupleId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) throw new Error('Error de red obteniendo la lista');
+                const data = await response.json();
+                const movies = data.movies || data;
+                renderGrid(movies, coupleId);
+            } catch (error) {
+                console.error(error);
+                grid.innerHTML = '<div class="error">Ocurrió un error cargando las películas.</div>';
+            }
+        }
+        function renderGrid(movies, coupleId) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = ''; 
+            if (!movies || movies.length === 0) {
+                grid.innerHTML = '<div class="empty">Aún no hay películas en su historial conjunto.</div>';
+                return;
+            }
+            movies.forEach(movie => {
+                
+                const imageUrl = movie.moviePoster 
+                    ? `https://image.tmdb.org/t/p/w500${movie.moviePoster}` 
+                    : null; 
+                
+                // Generamos la dirección para calificar usando variables de la DB
+                const ratingUrl = `/rating/${movie.movieId}`;
+                const cardHTML = `
+                    <a href="${ratingUrl}" class="movie-card">
+                        <div class="movie-poster">
+                            ${imageUrl 
+                                ? `<img src="${imageUrl}" alt="${movie.movieName}">` 
+                                : '<span style="color:#4f46e5; font-weight:bold;">Sin Imagen</span>'
+                            }
+                            <div class="card-overlay">
+                                <span class="btn-overlay">⭐ Calificar Peli</span>
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.movieName}</div>
+                            <!-- Si la peli ya cuenta con rating se visualiza -->
+                            <div class="movie-meta">
+                                <span class="rating-badge">
+                                    ${movie.rating[0] ? '★ ' + movie.rating[0].rating : 'Sin Calificar'}
+                                </span>
+                                <span class="rating-badge">
+                                    ${movie.rating[1] ? '★ ' + movie.rating[1].rating : 'Sin Calificar'}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+</body>
+</html>
