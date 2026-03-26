@@ -49,11 +49,12 @@ const ratingMovie = async (
   opinion: string
 ) => {
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId);
+
   if (!movie) {
     throw new NotFoundError("Movie not found");
   }
 
-  if (movie.ratings.some((rating) => rating.userId === userId)) {
+  if (movie.rating.some((r) => r.userId === userId)) {
     throw new ValidationError("User already rated this movie");
   }
 
@@ -65,7 +66,7 @@ const ratingMovie = async (
     throw new ValidationError("Rating must be between 1 and 10");
   }
 
-  if (movie.ratings.length >= 2) {
+  if (movie.rating.length >= 2) {
     throw new ValidationError("Movie must have at least 2 ratings");
   }
 
@@ -76,8 +77,11 @@ const ratingMovie = async (
   };
 
   const newMovie = {
-    ...movie,
-    ratings: [...movie.ratings, newRating],
+    movieId: movie.movieId,
+    movieName: movie.movieName,
+    moviePoster: movie.moviePoster,
+    coupleId: movie.coupleId,
+    rating: [...movie.rating, newRating],
   };
 
   const movieResult = await coupleMoviesRepository.updateMovie(newMovie);
