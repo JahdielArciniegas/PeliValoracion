@@ -27,12 +27,12 @@ const getMovieWatched = async (
   res: Response,
   next: NextFunction
 ) => {
-  const coupleId = req.params.coupleId;
+  const idcouple = req.params.idcouple;
   const movieId = req.params.id;
 
   try {
     const movies = await coupleMovieService.getMovieWatched(
-      coupleId as string,
+      idcouple as string,
       movieId as string
     );
     res.status(200).json(movies);
@@ -46,11 +46,11 @@ const getAllMoviesWatched = async (
   res: Response,
   next: NextFunction
 ) => {
-  const coupleId = req.params.coupleId;
+  const idcouple = req.params.idcouple;
 
   try {
     const movies = await coupleMovieService.getAllMoviesWatched(
-      coupleId as string
+      idcouple as string
     );
     res.status(200).json(movies);
   } catch (error) {
@@ -60,13 +60,13 @@ const getAllMoviesWatched = async (
 
 const rateMovie = async (req: Request, res: Response, next: NextFunction) => {
   const movieId = req.params.movieId;
-  const coupleId = req.params.coupleId;
+  const idcouple = req.params.idcouple;
   const { rating, opinion, userId } = req.body;
 
   try {
     await coupleMovieService.ratingMovie(
       userId,
-      coupleId as string,
+      idcouple as string,
       movieId as string,
       rating,
       opinion
