@@ -21,11 +21,15 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
             min-height: 100vh; /* Cambiado a min-height para evitar cortes si crece */
             margin: 0;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
         }
+
 
         .auth-container {
             background-color: var(--card-bg);
@@ -184,6 +188,18 @@
     </style>
 </head>
 <body>
+
+    <!-- Navegación -->
+    <% if (session && session.user && session.user.user) { %>
+    <nav style="width: 100%; max-width: 1000px; background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+        <div style="font-weight: 700; color: var(--primary-color); font-size: 1.2rem;">Peli Pareja</div>
+        <div style="display: flex; gap: 1.5rem;">
+            <a href="/movies" style="text-decoration: none; color: var(--text-color); font-weight: 600; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">Cartelera</a>
+            <a href="/coupleMovies" style="text-decoration: none; color: var(--text-color); font-weight: 600; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">Mis Películas</a>
+            <a href="/home" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">Mi Perfil</a>
+        </div>
+    </nav>
+    <% } %>
 
     <% if (!session.user.user) { %>
     <div class="auth-container">
