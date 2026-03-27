@@ -1,30 +1,46 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { moviesService } from "../services/movies.service.js";
 
-const searchMovies = async (req: Request, res: Response) => {
-  const query = req.params.query as string;
-  const movies = await moviesService.searchMovies(query);
-  res.status(200).json(movies);
+const searchMovies = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const query = req.query.q as string;
+    const movies = await moviesService.searchMovies(query);
+    res.status(200).json(movies);
+  }catch(error){
+    next(error);
+  }
 };
 
-const nowplayingMovies = async (req: Request, res: Response) => {
-  const movies = await moviesService.nowPlayingMovies();
-  res.status(200).json(movies);
+const nowPlayingMovies = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const movies = await moviesService.nowPlayingMovies();
+    res.status(200).json(movies);
+  }catch(error){
+    next(error);
+  }
 };
 
-const topRatedMovies = async (req: Request, res: Response) => {
-  const movies = await moviesService.topRatedMovies();
-  res.status(200).json(movies);
+const topRatedMovies = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const movies = await moviesService.topRatedMovies();
+    res.status(200).json(movies);
+  }catch(error){
+    next(error);
+  }
 };
 
-const popularMovies = async (req: Request, res: Response) => {
-  const movies = await moviesService.popularMovies();
-  res.status(200).json(movies);
+const popularMovies = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const movies = await moviesService.popularMovies();
+    res.status(200).json(movies);
+  }catch(error){
+    next(error);
+  }
 };
 
 export const moviesController = {
   searchMovies,
-  nowplayingMovies,
+  nowPlayingMovies,
   topRatedMovies,
   popularMovies,
 };
