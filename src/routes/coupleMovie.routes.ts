@@ -13,12 +13,12 @@ coupleMovieRouter.post(
   validateRequest(coupleMovieCreateSchema),
   coupleMoviesController.markMovieWatched,
 );
-coupleMovieRouter.get("/:idcouple/:id", coupleMoviesController.getMovieWatched);
-coupleMovieRouter.get("/:idcouple", coupleMoviesController.getAllMoviesWatched);
+coupleMovieRouter.get("/:coupleId/:movieId", coupleMoviesController.getMovieWatched);
+coupleMovieRouter.get("/:coupleId", coupleMoviesController.getAllMoviesWatched);
 coupleMovieRouter.post(
-  "/:idcouple/rate/:movieId",
+  "/couple/:coupleId/movie/:movieId/rating",
   validateRequest(coupleMovieRateSchema),
-  coupleMoviesController.rateMovie,
+  coupleMoviesController.ratingMovie,
 );
 
 export default coupleMovieRouter;
