@@ -11,19 +11,19 @@ export const coupleMovieSchema = z.object({
   movieName: z.string(),
   moviePoster: z.string(),
   coupleId: z.string(),
-  rating: z.array(ratingSchema),
+  ratings: z.array(ratingSchema),
 });
 
 export const coupleMovieCreateSchema = z.object({
   body: coupleMovieSchema.omit({
-    rating: true,
+    ratings: true,
   }),
 });
 
 export const coupleMovieRateSchema = z.object({
   body: ratingSchema,
   params: z.object({
-    idcouple: z.string(),
+    coupleId: z.string(),
     movieId: z.string(),
   }),
 });
