@@ -8,7 +8,7 @@ const coupleMovieSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Couple",
   },
-  rating: Array,
+  ratings: Array,
 });
 
 coupleMovieSchema.set("toJSON", {
