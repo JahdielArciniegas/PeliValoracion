@@ -276,9 +276,9 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="loadCategory('nowplaying', this)">En Cartelera</button>
+            <button class="tab-btn active" onclick="loadCategory('now-playing', this)">En Cartelera</button>
             <button class="tab-btn" onclick="loadCategory('popular', this)">Populares</button>
-            <button class="tab-btn" onclick="loadCategory('toprated', this)">Mejor Valoradas</button>
+            <button class="tab-btn" onclick="loadCategory('top-rated', this)">Mejor Valoradas</button>
         </div>
 
         <div id="grid" class="movies-grid">
@@ -315,7 +315,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
             // Usar tu endpoint: /search/:query
-            fetchMovies(`search/${query}`);
+            fetchMovies(`search?q=${query}`);
         }
 
         // Permitir buscar al presionar Enter

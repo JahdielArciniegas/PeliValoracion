@@ -324,7 +324,7 @@
                 }
                 
                 // Analizar calificaciones previas
-                const ratings = movie.rating || [];
+                const ratings = movie.ratings || [];
                 updateStatusPanel(ratings);
                 renderReviews(ratings);
                 
@@ -342,7 +342,7 @@
             const statusText = document.getElementById('rating-status-text');
             const totalRatings = ratings.length;
             // Verificar si el usuario actual ya calificó
-            const userAlreadyRated = ratings.some(r => r.userId === userId);
+            const userAlreadyRated = ratings.some(rating => rating.userId === userId);
             
             if (totalRatings === 0) {
                 statusText.innerHTML = `<span class="status-badge badge-none">Sin calificar</span> Ninguno de los dos ha calificado esta película aún.`;
@@ -418,7 +418,6 @@
             const ratingValue = Number(checkedStar.value);
             const opinionText = document.getElementById('opinion').value.trim();
             try {
-                // Hacer petición POST a la ruta indicada: /api/coupleMovie/:idcouple/rate/:movieId
                 const response = await fetch(`/api/coupleMovie/${coupleId}/rate/${movieId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
