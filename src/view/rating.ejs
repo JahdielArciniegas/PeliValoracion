@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -90,6 +89,58 @@
         .badge-none { background-color: #fee2e2; color: #ef4444; }
         .badge-partial { background-color: #fef3c7; color: #d97706; }
         .badge-full { background-color: #d1fae5; color: #10b981; }
+        
+        /* --- Reseñas de la Pareja --- */
+        .reviews-section {
+            margin-top: 2rem;
+            text-align: left;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 1.5rem;
+            display: none; /* Se visualiza sólo si existen reseñas */
+        }
+        .reviews-title {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .review-card {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--gray-light);
+        }
+        .review-card.partner {
+            border-left-color: #ec4899; /* Rosa para la pareja */
+            background-color: #fdf2f8;
+        }
+        .review-card.me {
+            border-left-color: var(--primary-color); /* Azul para ti */
+            background-color: #eef2ff;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .review-author {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        .review-stars {
+            color: var(--star-color);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+        .review-text {
+            color: var(--gray-text);
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.4;
+        }
         /* --- Formulario y Estrellas --- */
         .stars-container {
             display: flex;
@@ -198,6 +249,11 @@
                     Ninguno ha calificado esta película aún.
                 </div>
             </div>
+            <!-- Sección de visualización de opiniones mutuas -->
+            <div id="reviews-section" class="reviews-section">
+                <div class="reviews-title">Nuestras Opiniones</div>
+                <div id="reviews-list"></div>
+            </div>
             <!-- Formulario de Calificación -->
             <form id="ratingForm">
                 <div class="stars-container">
@@ -241,8 +297,9 @@
         const coupleId = document.getElementById('coupleId').value;
         const userId = document.getElementById('userId').value;
         
-        // Obtener el ID de la película desde la URL actual (Ej. /rating/12345)
-        const movieId = document.getElementById('movieId').value; // Toma el último segmento de la URL
+        // Obtener el ID de la película desde la variable enviada por backend en el render
+        const movieId = document.getElementById('movieId').value; 
+        
         // Referencias a elementos del DOM
         const loadingView = document.getElementById('loading-view');
         const contentView = document.getElementById('content-view');
@@ -265,10 +322,12 @@
                     posterImg.src = `https://image.tmdb.org/t/p/w500${movie.moviePoster}`;
                     posterImg.style.display = 'block';
                 }
+                
                 // Analizar calificaciones previas
-                // Asumiendo que el modelo guarda las reviews en un array llamado "ratings" o "reviews"
                 const ratings = movie.rating || [];
                 updateStatusPanel(ratings);
+                renderReviews(ratings);
+                
                 // Mostrar contenido
                 loadingView.style.display = 'none';
                 contentView.style.display = 'block';
@@ -284,13 +343,13 @@
             const totalRatings = ratings.length;
             // Verificar si el usuario actual ya calificó
             const userAlreadyRated = ratings.some(r => r.userId === userId);
+            
             if (totalRatings === 0) {
                 statusText.innerHTML = `<span class="status-badge badge-none">Sin calificar</span> Ninguno de los dos ha calificado esta película aún.`;
             } else if (totalRatings === 1) {
                 if (userAlreadyRated) {
                     statusText.innerHTML = `<span class="status-badge badge-partial">Falta tu pareja</span> Tú ya calificaste esta película. Esperando a tu pareja.`;
                     disableForm();
-                    
                 } else {
                     statusText.innerHTML = `<span class="status-badge badge-partial">Faltas tú</span> Tu pareja ya calificó esta película. ¡Es tu turno!`;
                 }
@@ -299,11 +358,49 @@
                 disableForm();
             }
         }
+        
+        // Renderizar las reviews (Tanto la del usuario como la de su pareja)
+        function renderReviews(ratings) {
+            const reviewsSection = document.getElementById('reviews-section');
+            const reviewsList = document.getElementById('reviews-list');
+            reviewsList.innerHTML = '';
+            
+            if (ratings.length === 0) {
+                reviewsSection.style.display = 'none';
+                return;
+            }
+            // Habilitar visualización de la sección si hay al menos una reseña
+            reviewsSection.style.display = 'block';
+            
+            ratings.forEach(r => {
+                const isMe = r.userId === userId;
+                
+                // Generar representación visual de calificación de 10 estrellas máx
+                const ratingCount = Math.round(r.rating) || 0;
+                const starsHtml = '★'.repeat(ratingCount) + '☆'.repeat(10 - ratingCount);
+                
+                // Generación de la tarjeta iterativa indicando de quién es
+                const card = document.createElement('div');
+                card.className = `review-card ${isMe ? 'me' : 'partner'}`;
+                card.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-author">${isMe ? 'Mi Reseña' : 'Reseña de mi Pareja 💖'}</span>
+                        <span class="review-stars" title="${r.rating}/10">${starsHtml} <span style="color:#6b7280; font-size:0.8rem;">(${r.rating})</span></span>
+                    </div>
+                    ${r.opinion 
+                        ? `<p class="review-text">"${r.opinion}"</p>` 
+                        : '<p class="review-text" style="font-style:italic">No escribió ninguna reseña.</p>'
+                    }
+                `;
+                reviewsList.appendChild(card);
+            });
+        }
         function disableForm() {
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Ya calificada';
-            document.querySelectorAll('input[name="rating"]').forEach(el => el.disabled = true);
-            document.getElementById('opinion').disabled = true;
+            submitBtn.textContent = 'Ya calificada / Actualización inhabilitada';
+            
+            // Ocultamos el formulario entero en su lugar para simplificar y dar espacio a las revisiones
+            ratingForm.style.display = 'none';
         }
         // Manejo del POST para enviar la puntuación
         ratingForm.addEventListener('submit', async (event) => {
@@ -342,8 +439,7 @@
                 // Recargar estado actual (o redirigir)
                 setTimeout(() => {
                     fetchMovieData(); // Refresca para ver el estado actualizado
-                    // window.location.href = '/coupleMovies'; // Descomentar si deseas volver directo a la lista
-                }, 2000);
+                }, 1500);
             } catch (error) {
                 console.error(error);
                 feedbackMsg.textContent = error.message;
