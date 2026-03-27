@@ -27,8 +27,8 @@ const getMovieWatched = async (
   res: Response,
   next: NextFunction
 ) => {
-  const idcouple = req.params.idcouple;
-  const movieId = req.params.id;
+  const idcouple = req.params.coupleId;
+  const movieId = req.params.movieId;
 
   try {
     const movies = await coupleMovieService.getMovieWatched(
@@ -46,7 +46,7 @@ const getAllMoviesWatched = async (
   res: Response,
   next: NextFunction
 ) => {
-  const idcouple = req.params.idcouple;
+  const idcouple = req.params.coupleId;
 
   try {
     const movies = await coupleMovieService.getAllMoviesWatched(
@@ -58,9 +58,9 @@ const getAllMoviesWatched = async (
   }
 };
 
-const rateMovie = async (req: Request, res: Response, next: NextFunction) => {
+const ratingMovie = async (req: Request, res: Response, next: NextFunction) => {
   const movieId = req.params.movieId;
-  const idcouple = req.params.idcouple;
+  const idcouple = req.params.coupleId;
   const { rating, opinion, userId } = req.body;
 
   try {
@@ -81,5 +81,5 @@ export const coupleMoviesController = {
   markMovieWatched,
   getMovieWatched,
   getAllMoviesWatched,
-  rateMovie,
+  ratingMovie,
 };
