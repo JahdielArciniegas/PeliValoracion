@@ -292,7 +292,7 @@
 
         // Al cargar la página, mostramos "En Cartelera" por defecto
         document.addEventListener('DOMContentLoaded', () => {
-            loadCategory('nowplaying', document.querySelector('.tab-btn.active'));
+            loadCategory('now-playing', document.querySelector('.tab-btn.active'));
         });
 
         // Función para cambiar de categoría
@@ -412,7 +412,7 @@ async function markAsSeen(event, movie) {
         },
         body: JSON.stringify({
             coupleId: coupleId,
-            movieId: movieObj.movieId,
+            movieId: String(movieObj.movieId),
             movieName: movieObj.movieName,
             moviePoster: movieObj.moviePoster
         })

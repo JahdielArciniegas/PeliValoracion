@@ -284,9 +284,8 @@
                 </div>
                 <button type="submit" id="submit-btn" class="btn-submit">Enviar Calificación</button>
                 <div id="form-feedback" class="feedback-message"></div>
-                
-                <a href="/coupleMovies" class="btn-return">← Volver a nuestras películas</a>
             </form>
+            <a href="/coupleMovies" class="btn-return">← Volver a nuestras películas</a>
         </div>
     </div>
     <script>
@@ -418,7 +417,7 @@
             const ratingValue = Number(checkedStar.value);
             const opinionText = document.getElementById('opinion').value.trim();
             try {
-                const response = await fetch(`/api/coupleMovie/${coupleId}/rate/${movieId}`, {
+                const response = await fetch(`/api/coupleMovie/couple/${coupleId}/movie/${movieId}/rating`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
