@@ -1,7 +1,8 @@
 import { JWT_SECRET } from "../config/dotenv.js";
-import type { User } from "../interfaces/user.js";
+import type { User, UserUpdate } from "../interfaces/user.js";
 import { userRepositories } from "../repositories/user.repositories.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import {
   ValidationError,
   NotFoundError,
@@ -12,13 +13,18 @@ import {
 const create = async (
   name: string,
   email: string,
+  password: string,
   idSession: string | undefined
 ) => {
   if (idSession) {
     throw new ValidationError("User should not have a session");
   }
-  if (!name || !email)
-    throw new ValidationError("User name and email are required");
+  if (!name || !email || !password)
+    throw new ValidationError("User name, email and password are required");
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   const coupleId = "";
   const userExist = await userRepositories.getOneByEmail(email);
   if (userExist) throw new ValidationError("User already exists");
@@ -26,18 +32,20 @@ const create = async (
     name: name,
     email: email,
     coupleId: coupleId,
+    password: hashedPassword,
   };
   const userCreate = await userRepositories.create(newUser);
   return userCreate;
 };
 
-const getOne = async (email: string, idSession: string | undefined) => {
+const getOne = async (email: string, password: string, idSession: string | undefined) => {
   if (idSession) {
     throw new ValidationError("User should not have a session");
   }
-  if (!email) throw new ValidationError("Email is required");
+  if (!email || !password) throw new ValidationError("Email and password are required");
   const user = await userRepositories.getOneByEmail(email);
-  if (!user) throw new NotFoundError("User not found");
+  const isPasswordValid = await bcrypt.compare(password, user!.password);
+  if (!user || !isPasswordValid) throw new NotFoundError("Invalid credentials");
   const userToken = {
     id: user.id,
     name: user.name,
@@ -49,14 +57,14 @@ const getOne = async (email: string, idSession: string | undefined) => {
   return { user, token };
 };
 
-const update = async (id: string | undefined, user: User) => {
+const update = async (id: string | undefined, user: UserUpdate) => {
   if (!id) throw new UnauthorizedError("Id is required for update");
   if (!user.email) throw new ValidationError("Email is required");
   const userExist = await userRepositories.getOneById(id);
   if (!userExist) throw new NotFoundError("User not found");
   if (!user.name) throw new ValidationError("User name is required");
   const coupleId = user.coupleId || userExist.coupleId;
-  const newUser: User = {
+  const newUser: UserUpdate = {
     name: user.name,
     email: user.email,
     coupleId: coupleId,

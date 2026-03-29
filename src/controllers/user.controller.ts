@@ -4,8 +4,8 @@ import { userService } from "../services/user.service.js";
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user: currentUser } = req.session;
-    const { email } = req.body;
-    const { user, token } = await userService.getOne(email, currentUser?.id);
+    const { email, password } = req.body;
+    const { user, token } = await userService.getOne(email, password, currentUser?.id);
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -22,8 +22,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user: currentUser } = req.session;
-    const { name, email } = req.body;
-    const user = await userService.create(name, email, currentUser?.id);
+    const { name, email, password } = req.body;
+    const user = await userService.create(name, email, password, currentUser?.id);
     res.status(201).json(user);
   } catch (error) {
     next(error);

@@ -1,4 +1,4 @@
-import type { User as UserInterface } from "../interfaces/user.js";
+import type { User as UserInterface, UserUpdate } from "../interfaces/user.js";
 import User from "../models/user.js";
 
 const create = async (user: UserInterface) => {
@@ -6,6 +6,7 @@ const create = async (user: UserInterface) => {
     name: user.name,
     email: user.email,
     coupleId: user.coupleId,
+    password: user.password,
   });
   const result = await newUser.save();
   return result;
@@ -21,7 +22,7 @@ const getOneById = async (id: string) => {
   return result;
 };
 
-const update = async (user: UserInterface) => {
+const update = async (user: UserUpdate) => {
   const result = await User.findByIdAndUpdate(user.id, user, {
     new: true,
   }).populate("coupleId");

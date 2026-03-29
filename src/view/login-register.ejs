@@ -138,6 +138,10 @@
                 <label for="login-email">Correo Electrónico</label>
                 <input type="email" id="login-email" name="email" placeholder="tucorreo@ejemplo.com" required>
             </div>
+            <div class="form-group">
+                <label for="login-password">Contraseña</label>
+                <input type="password" id="login-password" name="password" placeholder="Contraseña" required>
+            </div>
             <button type="submit" class="btn-submit">Entrar</button>
         </form>
 
@@ -150,6 +154,10 @@
             <div class="form-group">
                 <label for="reg-email">Correo Electrónico</label>
                 <input type="email" id="reg-email" name="email" placeholder="tucorreo@ejemplo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Contraseña</label>
+                <input type="password" id="reg-password" name="password" placeholder="Contraseña" required>
             </div>
             
             <button type="submit" class="btn-submit">Crear Cuenta</button>
@@ -186,6 +194,7 @@
                     const formData = new FormData(registerForm)
                     const name = formData.get('username')
                     const email = formData.get('email')
+                    const password = formData.get('password')
                     const res = await fetch('api/user/register', {
                         method: 'POST',
                         headers: {
@@ -193,7 +202,8 @@
                         },
                         body: JSON.stringify({
                             name,
-                            email
+                            email,
+                            password
                         })
                     })
 
@@ -215,6 +225,7 @@
                 // Aqui se podria agregar logica para el login
                 const formData = new FormData(loginForm)
                 const email = formData.get('email')
+                const password = formData.get('password')
 
                 const res = await fetch('api/user/login', {
                     method: 'POST',
@@ -222,7 +233,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email
+                        email,
+                        password
                     })
                 })
 
