@@ -1,31 +1,19 @@
 import express from "express";
-import { authController } from "../controllers/user.controller.js";
+import { userController } from "../controllers/user.controller.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import {
-  userCreateSchema,
   userDeleteSchema,
-  userLoginSchema,
   userUpdateSchema,
 } from "../schemas/user.js";
 
-const authRoutes = express.Router();
+const userRoutes = express.Router();
 
-authRoutes.post(
-  "/register",
-  validateRequest(userCreateSchema),
-  authController.register,
-);
-authRoutes.post(
-  "/login",
-  validateRequest(userLoginSchema),
-  authController.login,
-);
-authRoutes.post("/logout", authController.logout);
-authRoutes.put(":id", validateRequest(userUpdateSchema), authController.update);
-authRoutes.delete(
+
+userRoutes.put(":id", validateRequest(userUpdateSchema), userController.update);
+userRoutes.delete(
   ":id",
   validateRequest(userDeleteSchema),
-  authController.remove,
+  userController.remove,
 );
 
-export default authRoutes;
+export default userRoutes;

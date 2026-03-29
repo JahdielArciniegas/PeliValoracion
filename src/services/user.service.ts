@@ -1,12 +1,9 @@
-import { JWT_SECRET } from "../config/dotenv.js";
 import type { User, UserUpdate } from "../interfaces/user.js";
 import { userRepositories } from "../repositories/user.repositories.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
   ValidationError,
   NotFoundError,
-  InternalServerError,
   UnauthorizedError,
 } from "../utils/errors.js";
 
@@ -14,11 +11,7 @@ const create = async (
   name: string,
   email: string,
   password: string,
-  idSession: string | undefined
 ) => {
-  if (idSession) {
-    throw new ValidationError("User should not have a session");
-  }
   if (!name || !email || !password)
     throw new ValidationError("User name, email and password are required");
 
@@ -38,23 +31,11 @@ const create = async (
   return userCreate;
 };
 
-const getOne = async (email: string, password: string, idSession: string | undefined) => {
-  if (idSession) {
-    throw new ValidationError("User should not have a session");
-  }
-  if (!email || !password) throw new ValidationError("Email and password are required");
-  const user = await userRepositories.getOneByEmail(email);
-  const isPasswordValid = await bcrypt.compare(password, user!.password);
-  if (!user || !isPasswordValid) throw new NotFoundError("Invalid credentials");
-  const userToken = {
-    id: user.id,
-    name: user.name,
-    coupleId: user.coupleId,
-  };
-  if (!JWT_SECRET) throw new InternalServerError("JWT secret not found");
-
-  const token = jwt.sign({ user: userToken }, JWT_SECRET, { expiresIn: "1h" });
-  return { user, token };
+const getOne = async (id: string | undefined) => {
+  if (!id) throw new ValidationError("User id is required");
+  const user = await userRepositories.getOneById(id);
+  if (!user) throw new NotFoundError("User not found");
+  return user;
 };
 
 const update = async (id: string | undefined, user: UserUpdate) => {

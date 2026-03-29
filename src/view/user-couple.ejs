@@ -296,7 +296,7 @@
         const logoutForm = document.getElementById("logoutForm")
         logoutForm.addEventListener('submit', async(event) => {
             event.preventDefault();
-            const response = await fetch('/api/user/logout', {
+            const response = await fetch('/api/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
