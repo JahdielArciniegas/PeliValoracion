@@ -2,10 +2,10 @@ import type { User, UserUpdate } from "./user.js";
 import { userRepositories } from "./user.repositories.js";
 import bcrypt from "bcrypt";
 import {
-  ValidationError,
   NotFoundError,
   UnauthorizedError,
-} from "../../shared/utils/errors.js";
+  ValidationError,
+} from "@shared/utils/errors.js";
 
 const create = async (
   name: string,

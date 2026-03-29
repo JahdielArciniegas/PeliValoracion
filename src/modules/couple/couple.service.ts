@@ -2,10 +2,10 @@ import { coupleRepositories } from "./couple.repositories.js";
 import type { Couple } from "./couple.js";
 import { userRepositories } from "../user/user.repositories.js";
 import {
-  ValidationError,
   NotFoundError,
   InternalServerError,
-} from "../../shared/utils/errors.js";
+  ValidationError,
+} from "@shared/utils/errors.js";
 
 const getCode = async (id: string) => {
   const user = await userRepositories.getOneById(id);

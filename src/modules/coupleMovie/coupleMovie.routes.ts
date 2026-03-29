@@ -1,6 +1,6 @@
 import express from "express";
 import { coupleMoviesController } from "./coupleMovies.controller.js";
-import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { validateRequest } from "@shared/middleware/validateRequest.js";
 import {
   coupleMovieCreateSchema,
   coupleMovieRateSchema,

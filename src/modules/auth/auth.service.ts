@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { userRepositories } from "../user/user.repositories.js";
-import type { User } from "../user/user.js";
-import { NotFoundError, InternalServerError, ValidationError } from "../../shared/utils/errors.js";
-import { JWT_SECRET } from "../../shared/config/dotenv.js";
+import { userRepositories } from "@user/user.repositories.js";
+import type { User } from "@user/user.js";
+import { NotFoundError, InternalServerError, ValidationError } from "@shared/utils/errors.js";
+import { JWT_SECRET } from "@shared/config/dotenv.js";
 
 const register = async (
   name: string,
