@@ -1,4 +1,4 @@
-import { getConnection } from "./db/connectionMongoDB.js";
+import { getConnection } from "./shared/db/connectionMongoDB.js";
 import app from "./app.js";
 await getConnection();
 

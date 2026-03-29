@@ -1,4 +1,4 @@
-import { tmdb } from "../tmdb.js";
+import { tmdb } from "../../tmdb.js";
 
 const nowPlayingMovies = async () => {
   const result = await tmdb.movies.nowPlaying({ language: "es" });

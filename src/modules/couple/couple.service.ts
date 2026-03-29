@@ -1,11 +1,11 @@
-import { coupleRepositories } from "../repositories/couple.repositories.js";
-import type { Couple } from "../interfaces/couple.js";
-import { userRepositories } from "../repositories/user.repositories.js";
+import { coupleRepositories } from "./couple.repositories.js";
+import type { Couple } from "./couple.js";
+import { userRepositories } from "../user/user.repositories.js";
 import {
   ValidationError,
   NotFoundError,
   InternalServerError,
-} from "../utils/errors.js";
+} from "../../shared/utils/errors.js";
 
 const getCode = async (id: string) => {
   const user = await userRepositories.getOneById(id);

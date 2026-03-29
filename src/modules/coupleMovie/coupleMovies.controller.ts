@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { coupleMovieService } from "../services/coupleMovie.service.js";
+import { coupleMovieService } from "./coupleMovie.service.js";
 
 const markMovieWatched = async (
   req: Request,

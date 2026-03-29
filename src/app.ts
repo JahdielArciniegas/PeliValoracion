@@ -1,15 +1,15 @@
 import express from "express";
-import userRoutes from "./routes/user.routes.js";
-import coupleRoutes from "./routes/couple.routes.js";
+import userRoutes from "./modules/user/user.routes.js";
+import coupleRoutes from "./modules/couple/couple.routes.js";
 
-import coupleMovieRouter from "./routes/coupleMovie.routes.js";
-import movieRouter from "./routes/movie.routes.js";
-import errorHandler from "./middleware/errorHandler.js";
-import verifyToken from "./middleware/verifyToken.js";
-import viewsRoutes from "./routes/views.routes.js";
+import coupleMovieRouter from "./modules/coupleMovie/coupleMovie.routes.js";
+import movieRouter from "./modules/movie/movie.routes.js";
+import errorHandler from "./shared/middleware/errorHandler.js";
+import verifyToken from "./shared/middleware/verifyToken.js";
+import viewsRoutes from "./view/views.routes.js";
 import cookieParser from "cookie-parser";
-import rateLimiter from "./middleware/rateLimiting.js";
-import authRoutes from "./routes/auth.routes.js";
+import rateLimiter from "./shared/middleware/rateLimiting.js";
+import authRoutes from "./modules/auth/auth.routes.js";
 const app = express();
 
 app.use(rateLimiter);

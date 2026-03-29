@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { userService } from "../services/user.service.js";
+import { userService } from "./user.service.js";
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {

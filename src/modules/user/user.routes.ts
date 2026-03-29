@@ -1,10 +1,10 @@
 import express from "express";
-import { userController } from "../controllers/user.controller.js";
-import { validateRequest } from "../middleware/validateRequest.js";
+import { userController } from "./user.controller.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import {
   userDeleteSchema,
   userUpdateSchema,
-} from "../schemas/user.js";
+} from "./user.schema.js";
 
 const userRoutes = express.Router();
 

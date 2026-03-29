@@ -1,12 +1,12 @@
-import { coupleControllers } from "../controllers/couple.controller.js";
+import { coupleControllers } from "./couple.controller.js";
 import express from "express";
-import { validateRequest } from "../middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import {
   coupleCreateSchema,
   coupleValidateSchema,
   coupleChangeNameSchema,
   coupleRemoveSchema,
-} from "../schemas/couple.js";
+} from "./couple.schema.js";
 
 const coupleRouter = express.Router();
 

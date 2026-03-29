@@ -1,5 +1,5 @@
-import type { User as UserInterface, UserUpdate } from "../interfaces/user.js";
-import User from "../models/user.js";
+import type { User as UserInterface, UserUpdate } from "./user.js";
+import User from "./user.model.js";
 
 const create = async (user: UserInterface) => {
   const newUser = new User({

@@ -1,10 +1,10 @@
 import express from "express";
-import { coupleMoviesController } from "../controllers/coupleMovies.controller.js";
-import { validateRequest } from "../middleware/validateRequest.js";
+import { coupleMoviesController } from "./coupleMovies.controller.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import {
   coupleMovieCreateSchema,
   coupleMovieRateSchema,
-} from "../schemas/coupleMovie.js";
+} from "./coupleMovie.schema.js";
 
 const coupleMovieRouter = express.Router({ mergeParams: true });
 

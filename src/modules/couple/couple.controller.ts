@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { coupleServices } from "../services/couple.service.js";
+import { coupleServices } from "./couple.service.js";
 
 const getCoupleCode = async (
   req: Request,

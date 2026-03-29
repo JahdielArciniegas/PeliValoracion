@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { moviesService } from "../services/movies.service.js";
+import { moviesService } from "./movies.service.js";
 
 const searchMovies = async (req: Request, res: Response, next: NextFunction) => {
   try{

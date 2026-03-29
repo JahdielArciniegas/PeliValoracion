@@ -1,11 +1,11 @@
-import { coupleMoviesRepository } from "../repositories/coupleMovies.repositories.js";
-import { coupleRepositories } from "../repositories/couple.repositories.js";
-import type { CoupleMovie } from "../interfaces/coupleMovie.js";
+import { coupleMoviesRepository } from "./coupleMovies.repositories.js";
+import { coupleRepositories } from "../couple/couple.repositories.js";
+import type { CoupleMovie } from "./coupleMovie.js";
 import {
   NotFoundError,
   InternalServerError,
   ValidationError,
-} from "../utils/errors.js";
+} from "../../shared/utils/errors.js";
 
 const markMovieWatched = async (movie: CoupleMovie) => {
   if (
@@ -54,7 +54,7 @@ const ratingMovie = async (
     throw new NotFoundError("Movie not found");
   }
 
-  if (movie.ratings.some((rating) => rating.userId === userId)) {
+  if (movie.ratings.some((rating: { userId: string; }) => rating.userId === userId)) {
     throw new ValidationError("User already rated this movie");
   }
 
