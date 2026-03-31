@@ -1,7 +1,7 @@
 import express from "express";
 import userRoutes from "@user/user.routes.js";
 import coupleRoutes from "@couple/couple.routes.js";
-
+import swaggerUi from "swagger-ui-express";
 import coupleMovieRouter from "@coupleMovie/coupleMovie.routes.js";
 import movieRouter from "@movie/movie.routes.js";
 import errorHandler from "@shared/middleware/errorHandler.js";
@@ -10,6 +10,7 @@ import viewsRoutes from "@view/views.routes.js";
 import cookieParser from "cookie-parser";
 import rateLimiter from "@shared/middleware/rateLimiting.js";
 import authRoutes from "@auth/auth.routes.js";
+import swaggerDocument from "@shared/swagger/swagger.js";
 const app = express();
 
 app.use(rateLimiter);
@@ -17,6 +18,7 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", "./src/view");
 app.use(cookieParser());
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(verifyToken);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
