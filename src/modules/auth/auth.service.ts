@@ -19,13 +19,14 @@ const register = async (
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+  const emailLower = email.toLowerCase();
 
   const coupleId = "";
-  const userExist = await userRepositories.getOneByEmail(email);
+  const userExist = await userRepositories.getOneByEmail(emailLower);
   if (userExist) throw new ValidationError("User already exists");
   const newUser: User = {
     name: name,
-    email: email,
+    email: emailLower,
     coupleId: coupleId,
     password: hashedPassword,
   };
@@ -38,7 +39,8 @@ const login = async (email: string, password: string, idSession: string | undefi
     throw new ValidationError("User should not have a session");
   }
   if (!email || !password) throw new ValidationError("Email and password are required");
-  const user = await userRepositories.getOneByEmail(email);
+  const emailLower = email.toLowerCase();
+  const user = await userRepositories.getOneByEmail(emailLower);
   const isPasswordValid = await bcrypt.compare(password, user!.password);
   if (!user || !isPasswordValid) throw new NotFoundError("Invalid credentials");
   const userToken = {

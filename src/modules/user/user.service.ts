@@ -17,13 +17,14 @@ const create = async (
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+  const emailLower = email.toLowerCase();
 
   const coupleId = "";
-  const userExist = await userRepositories.getOneByEmail(email);
+  const userExist = await userRepositories.getOneByEmail(emailLower);
   if (userExist) throw new ValidationError("User already exists");
   const newUser: User = {
     name: name,
-    email: email,
+    email: emailLower,
     coupleId: coupleId,
     password: hashedPassword,
   };
@@ -44,10 +45,11 @@ const update = async (id: string | undefined, user: UserUpdate) => {
   const userExist = await userRepositories.getOneById(id);
   if (!userExist) throw new NotFoundError("User not found");
   if (!user.name) throw new ValidationError("User name is required");
+  const emailLower = user.email.toLowerCase();
   const coupleId = user.coupleId || userExist.coupleId;
   const newUser: UserUpdate = {
     name: user.name,
-    email: user.email,
+    email: emailLower,
     coupleId: coupleId,
   };
   const userUpdate = await userRepositories.update(newUser);
