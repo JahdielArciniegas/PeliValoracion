@@ -5,7 +5,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   ValidationError,
-} from "@shared/utils/errors.js";
+} from "../../shared/utils/errors.js";
 
 const create = async (
   name: string,

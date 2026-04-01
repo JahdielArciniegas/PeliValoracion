@@ -1,6 +1,6 @@
 import express from "express";
 import { viewsController } from "./views.controller.js";
-import isAuth from "@shared/middleware/verifyToken.js";
+import isAuth from "../shared/middleware/verifyToken.js";
 
 const viewsRoutes = express.Router();
 

@@ -4,17 +4,6 @@
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
-
-    "baseUrl": "./src",
-    "paths": {
-      "@user/*": ["./modules/user/*"],
-      "@couple/*": ["./modules/couple/*"],
-      "@movie/*": ["./modules/movie/*"],
-      "@coupleMovie/*": ["./modules/coupleMovie/*"],
-      "@auth/*": ["./modules/auth/*"],
-      "@view/*": ["./view/*"],
-      "@shared/*": ["./shared/*"],
-    },
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",

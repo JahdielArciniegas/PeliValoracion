@@ -1,4 +1,4 @@
-import redisClient from "@shared/config/redis.js";
+import redisClient from "../../shared/config/redis.js";
 import { tmdb } from "../../tmdb.js";
 
 const nowPlayingMovies = async () => {

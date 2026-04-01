@@ -1,6 +1,6 @@
 import { coupleControllers } from "./couple.controller.js";
 import express from "express";
-import { validateRequest } from "@shared/middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import {
   coupleCreateSchema,
   coupleValidateSchema,

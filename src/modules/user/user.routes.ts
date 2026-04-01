@@ -1,6 +1,6 @@
 import express from "express";
 import { userController } from "./user.controller.js";
-import { validateRequest } from "@shared/middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import {
   userDeleteSchema,
   userUpdateSchema,
