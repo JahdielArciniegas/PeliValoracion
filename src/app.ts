@@ -11,12 +11,13 @@ import cookieParser from "cookie-parser";
 import rateLimiter from "@shared/middleware/rateLimiting.js";
 import authRoutes from "@auth/auth.routes.js";
 import swaggerDocument from "@shared/swagger/swagger.js";
+import path from "path";
 const app = express();
 
 app.use(rateLimiter);
 app.use(express.json());
 app.set("view engine", "ejs");
-app.set("views", "./src/view");
+app.set("views", path.join(__dirname, '../views'));
 app.use(cookieParser());
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(verifyToken);
