@@ -6,12 +6,14 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "../../shared/utils/errors.js";
+import dbConnect from "../../shared/db/connectionMongoDB.js";
 
 const create = async (
   name: string,
   email: string,
   password: string,
 ) => {
+  await dbConnect();
   if (!name || !email || !password)
     throw new ValidationError("User name, email and password are required");
 
@@ -33,6 +35,7 @@ const create = async (
 };
 
 const getOne = async (id: string | undefined) => {
+  await dbConnect();
   if (!id) throw new ValidationError("User id is required");
   const user = await userRepositories.getOneById(id);
   if (!user) throw new NotFoundError("User not found");
@@ -40,6 +43,7 @@ const getOne = async (id: string | undefined) => {
 };
 
 const update = async (id: string | undefined, user: UserUpdate) => {
+  await dbConnect();
   if (!id) throw new UnauthorizedError("Id is required for update");
   if (!user.email) throw new ValidationError("Email is required");
   const userExist = await userRepositories.getOneById(id);
@@ -57,6 +61,7 @@ const update = async (id: string | undefined, user: UserUpdate) => {
 };
 
 const remove = async (id: string | undefined) => {
+  await dbConnect();
   if (!id) throw new UnauthorizedError("Id is required for remove");
   const userExist = await userRepositories.getOneById(id);
   if (!userExist) throw new NotFoundError("User not found");

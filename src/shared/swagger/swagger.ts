@@ -18,7 +18,7 @@ const options = {
             ]
         }
     },
-    apis: ['./src/shared/swagger/*.yml']
+    apis: ['./src/shared/swagger/*.json']
 };
 
 const swaggerDocument = swaggerJsdoc(options);

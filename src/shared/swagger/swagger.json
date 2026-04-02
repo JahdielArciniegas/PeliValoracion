@@ -1,0 +1,541 @@
+{
+  "openapi": "3.0.1",
+  "info":
+    {
+      "title": "PeliValoración API",
+      "description": "API para la calificación de películas y series con la persona más especial de tu vida",
+      "contact": { "email": "arciniegasjahdiel@gmail.com" },
+      "version": "1.0.0"
+    },
+  "servers": [{ "url": "http://localhost:3003/api" }],
+  "tags":
+    [
+      { "name": "auth", "description": "Autenticación de los usuarios" },
+      { "name": "user", "description": "Operaciones acerca de los usuarios" },
+      { "name": "couple", "description": "Operaciones acerca de las parejas" },
+      {
+        "name": "coupleMovie",
+        "description": "Operaciones acerca de las películas de las parejas"
+      },
+      { "name": "movie", "description": "Operaciones generales de películas" }
+    ],
+  "paths":
+    {
+      "/auth/login":
+        {
+          "post":
+            {
+              "tags": ["auth"],
+              "summary": "Login de un usuario",
+              "operationId": "login",
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "properties":
+                                {
+                                  "email": { "type": "string" },
+                                  "password": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Login exitoso",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/AuthResponse" }
+                            }
+                        }
+                    },
+                  "401": { "description": "Credenciales inválidas" }
+                }
+            }
+        },
+      "/auth/register":
+        {
+          "post":
+            {
+              "tags": ["auth"],
+              "summary": "Registro de un usuario",
+              "operationId": "register",
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/json":
+                        { "schema": { "$ref": "#/components/schemas/User" } }
+                    }
+                },
+              "responses":
+                {
+                  "201":
+                    {
+                      "description": "Usuario creado",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/AuthResponse" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+      "/auth/logout":
+        {
+          "get":
+            {
+              "tags": ["auth"],
+              "summary": "Logout de un usuario",
+              "parameters":
+                [
+                  {
+                    "name": "idSession",
+                    "in": "query",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses": { "200": { "description": "Logout exitoso" } }
+            }
+        },
+      "/user/{id}":
+        {
+          "put":
+            {
+              "tags": ["user"],
+              "summary": "Actualizar usuario",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/json":
+                        { "schema": { "$ref": "#/components/schemas/User" } }
+                    }
+                },
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Usuario actualizado",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema": { "$ref": "#/components/schemas/User" }
+                            }
+                        }
+                    }
+                }
+            },
+          "delete":
+            {
+              "tags": ["user"],
+              "summary": "Eliminar usuario",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses": { "200": { "description": "Usuario eliminado" } }
+            }
+        },
+      "/couple/getCode/{userId}":
+        {
+          "get":
+            {
+              "tags": ["couple"],
+              "summary": "Obtener código de vinculación para el usuario",
+              "parameters":
+                [
+                  {
+                    "name": "userId",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Código obtenido",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Couple" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+      "/couple/validate/{userId}":
+        {
+          "put":
+            {
+              "tags": ["couple"],
+              "summary": "Validar y vincular pareja",
+              "parameters":
+                [
+                  {
+                    "name": "userId",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "requestBody":
+                {
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "properties": { "code": { "type": "string" } }
+                            }
+                        }
+                    }
+                },
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Vinculación exitosa",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Couple" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+      "/couple/{id}":
+        {
+          "get":
+            {
+              "tags": ["couple"],
+              "summary": "Obtener info de la pareja",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Datos de la pareja",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Couple" }
+                            }
+                        }
+                    }
+                }
+            },
+          "put":
+            {
+              "tags": ["couple"],
+              "summary": "Cambiar nombre de la pareja",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "requestBody":
+                {
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "properties": { "name": { "type": "string" } }
+                            }
+                        }
+                    }
+                },
+              "responses": { "200": { "description": "Nombre actualizado" } }
+            },
+          "delete":
+            {
+              "tags": ["couple"],
+              "summary": "Eliminar pareja",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses": { "200": { "description": "Pareja eliminada" } }
+            }
+        },
+      "/coupleMovie":
+        {
+          "post":
+            {
+              "tags": ["coupleMovie"],
+              "summary": "Marcar película como vista",
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "properties":
+                                {
+                                  "coupleId": { "type": "string" },
+                                  "movieId": { "type": "string" },
+                                  "movieName": { "type": "string" },
+                                  "moviePoster": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+              "responses":
+                { "200": { "description": "Película marcada como vista" } }
+            }
+        },
+      "/coupleMovie/{coupleId}":
+        {
+          "get":
+            {
+              "tags": ["coupleMovie"],
+              "summary": "Listar todas las películas vistas por la pareja",
+              "parameters":
+                [
+                  {
+                    "name": "coupleId",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Lista de películas",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "array",
+                                  "items":
+                                    {
+                                      "$ref": "#/components/schemas/MovieWatched"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+      "/coupleMovie/{coupleId}/{movieId}/rating":
+        {
+          "post":
+            {
+              "tags": ["coupleMovie"],
+              "summary": "Calificar una película vista",
+              "parameters":
+                [
+                  {
+                    "name": "coupleId",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  },
+                  {
+                    "name": "movieId",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "requestBody":
+                {
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "properties":
+                                {
+                                  "rating": { "type": "number" },
+                                  "opinion": { "type": "string" },
+                                  "userId": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+              "responses":
+                { "200": { "description": "Calificación guardada" } }
+            }
+        },
+      "/movies/search":
+        {
+          "get":
+            {
+              "tags": ["movie"],
+              "summary": "Buscar películas por texto",
+              "parameters":
+                [
+                  {
+                    "name": "query",
+                    "in": "query",
+                    "required": true,
+                    "schema": { "type": "string" }
+                  }
+                ],
+              "responses":
+                { "200": { "description": "Resultados de búsqueda" } }
+            }
+        },
+      "/movies/now-playing":
+        {
+          "get":
+            {
+              "tags": ["movie"],
+              "summary": "Películas actualmente en cartelera",
+              "responses": { "200": { "description": "Listado exitoso" } }
+            }
+        },
+      "/movies/popular":
+        {
+          "get":
+            {
+              "tags": ["movie"],
+              "summary": "Películas más populares",
+              "responses": { "200": { "description": "Listado exitoso" } }
+            }
+        }
+    },
+  "components":
+    {
+      "schemas":
+        {
+          "User":
+            {
+              "type": "object",
+              "properties":
+                {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "role": { "type": "string" },
+                  "password": { "type": "string", "writeOnly": true }
+                }
+            },
+          "AuthResponse":
+            {
+              "type": "object",
+              "properties":
+                {
+                  "token": { "type": "string" },
+                  "user": { "$ref": "#/components/schemas/User" }
+                }
+            },
+          "Couple":
+            {
+              "type": "object",
+              "properties":
+                {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "users": { "type": "array", "items": { "type": "string" } }
+                }
+            },
+          "MovieWatched":
+            {
+              "type": "object",
+              "properties":
+                {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "poster": { "type": "string" },
+                  "coupleId": { "type": "string" },
+                  "ratings":
+                    {
+                      "type": "array",
+                      "items":
+                        {
+                          "type": "object",
+                          "properties":
+                            {
+                              "userId": { "type": "string" },
+                              "rating": { "type": "number" },
+                              "opinion": { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

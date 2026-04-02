@@ -8,14 +8,20 @@ import errorHandler from "./shared/middleware/errorHandler.js";
 import verifyToken from "./shared/middleware/verifyToken.js";
 import viewsRoutes from "./view/views.routes.js";
 import cookieParser from "cookie-parser";
-import rateLimiter from "./shared/middleware/rateLimiting.js";
+import path from "node:path";
+// import rateLimiter from "./shared/middleware/rateLimiting.js";
 import authRoutes from "./modules/auth/auth.routes.js";
-import swaggerDocument from "./shared/swagger/swagger.js";
+const { default: swaggerDocument } = await import("./shared/swagger/swagger.json", {
+    with: {
+        type: "json",
+    },
+});
 const app = express();
-app.set('trust proxy', 1);
-app.use(rateLimiter);
+// app.use(rateLimiter);
 app.use(express.json());
 app.set("view engine", "ejs");
+app.set("views", path.join(process.cwd(), "src/view"));
+app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(verifyToken);

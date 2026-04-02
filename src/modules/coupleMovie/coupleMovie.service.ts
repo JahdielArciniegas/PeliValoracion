@@ -6,8 +6,10 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../shared/utils/errors.js";
+import dbConnect from "../../shared/db/connectionMongoDB.js";
 
 const markMovieWatched = async (movie: CoupleMovie) => {
+  await dbConnect();
   if (
     !movie.coupleId ||
     !movie.movieId ||
@@ -48,6 +50,7 @@ const ratingMovie = async (
   rating: number,
   opinion: string
 ) => {
+  await dbConnect();
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId);
 
   if (!movie) {
@@ -89,11 +92,13 @@ const ratingMovie = async (
 };
 
 const getMovieWatched = async (coupleId: string, movieId: string) => {
+  await dbConnect();
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId);
   return movie;
 };
 
 const getAllMoviesWatched = async (coupleId: string) => {
+  await dbConnect();
   const movies = await coupleMoviesRepository.getCoupleMovies(coupleId);
   return movies;
 };

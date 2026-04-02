@@ -4,6 +4,7 @@ import { userRepositories } from "../user/user.repositories.js";
 import type { User } from "../user/user.js";
 import { NotFoundError, InternalServerError, ValidationError } from "../../shared/utils/errors.js";
 import { JWT_SECRET } from "../../shared/config/dotenv.js";
+import dbConnect from "../../shared/db/connectionMongoDB.js";
 
 const register = async (
   name: string,
@@ -11,6 +12,7 @@ const register = async (
   password: string,
   idSession: string | undefined
 ) => {
+  await dbConnect();
   if (idSession) {
     throw new ValidationError("User should not have a session");
   }
@@ -35,6 +37,7 @@ const register = async (
 };
 
 const login = async (email: string, password: string, idSession: string | undefined) => {
+  await dbConnect();
   if (idSession) {
     throw new ValidationError("User should not have a session");
   }

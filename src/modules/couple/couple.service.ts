@@ -6,8 +6,10 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../shared/utils/errors.js";
+import dbConnect from "../../shared/db/connectionMongoDB.js";
 
 const getCode = async (id: string) => {
+  await dbConnect();
   const user = await userRepositories.getOneById(id);
   if (!user) {
     throw new NotFoundError("User not found");
@@ -29,6 +31,7 @@ const getCode = async (id: string) => {
 };
 
 const validateCouple = async (id: string, userId: string) => {
+  await dbConnect();
   const user = await userRepositories.getOneById(userId);
   if (!user) {
     throw new NotFoundError("User not found");
@@ -57,6 +60,7 @@ const validateCouple = async (id: string, userId: string) => {
 };
 
 const changeName = async (id: string, couple: Couple) => {
+  await dbConnect();
   if (couple.name === null || couple.name === undefined) {
     throw new ValidationError("Couple name is required");
   }
@@ -68,11 +72,13 @@ const changeName = async (id: string, couple: Couple) => {
 };
 
 const removeCouple = async (id: string) => {
+  await dbConnect();
   const couple = await coupleRepositories.remove(id);
   return couple;
 };
 
 const getOneCouple = async (id: string) => {
+  await dbConnect();
   const couple = await coupleRepositories.getOne(id);
   return couple;
 };
