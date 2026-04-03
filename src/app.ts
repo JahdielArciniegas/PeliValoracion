@@ -16,6 +16,14 @@ const { default: swaggerDocument } = await import("./shared/swagger/swagger.json
         type: "json",
     },
 });
+
+const options = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js'
+  ]
+};
 const app = express();
 // app.use(rateLimiter);
 app.use(express.json());
@@ -23,7 +31,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/view"));
 app.set("trust proxy", 1);
 app.use(cookieParser());
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 app.use(verifyToken);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
