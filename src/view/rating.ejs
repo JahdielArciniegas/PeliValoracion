@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calificar Película</title>
     <style>
-        /* --- ESTILOS EN BASE A LA APLICACIÓN INICIAL --- */
         :root {
             --primary-color: #4f46e5;
             --primary-hover: #4338ca;
@@ -57,7 +56,6 @@
             margin: 0;
             font-size: 1.5rem;
         }
-        /* --- Panel de Estado de Calificaciones --- */
         .status-panel {
             background-color: var(--bg-color);
             border-radius: 8px;
@@ -90,13 +88,12 @@
         .badge-partial { background-color: #fef3c7; color: #d97706; }
         .badge-full { background-color: #d1fae5; color: #10b981; }
         
-        /* --- Reseñas de la Pareja --- */
         .reviews-section {
             margin-top: 2rem;
             text-align: left;
             border-top: 1px solid var(--gray-light);
             padding-top: 1.5rem;
-            display: none; /* Se visualiza sólo si existen reseñas */
+            display: none; 
         }
         .reviews-title {
             font-size: 1.1rem;
@@ -112,11 +109,11 @@
             border-left: 4px solid var(--gray-light);
         }
         .review-card.partner {
-            border-left-color: #ec4899; /* Rosa para la pareja */
+            border-left-color: #ec4899; 
             background-color: #fdf2f8;
         }
         .review-card.me {
-            border-left-color: var(--primary-color); /* Azul para ti */
+            border-left-color: var(--primary-color); 
             background-color: #eef2ff;
         }
         .review-header {
@@ -141,7 +138,6 @@
             margin: 0;
             line-height: 1.4;
         }
-        /* --- Formulario y Estrellas --- */
         .stars-container {
             display: flex;
             flex-direction: row-reverse;
@@ -222,26 +218,21 @@
         }
         .alert-error { background-color: #fee2e2; color: #ef4444; }
         .alert-success { background-color: #d1fae5; color: #10b981; }
-        /* Spinner de carga inicial */
         #loading-view { padding: 3rem; color: var(--gray-text); font-style: italic; }
         #content-view { display: none; }
     </style>
 </head>
 <body>
-    <!-- Variables extraidas de la sesión y URL (EJS) -->
     <input type="hidden" id="coupleId" value="<%= session.user.user.coupleId %>">
     <input type="hidden" id="userId" value="<%= session.user.user.id %>">
     <input type="hidden" id="movieId" value="<%= movieId %>">
     <div class="rating-container">
-        <!-- Vista de Carga -->
         <div id="loading-view">Cargando información de la película...</div>
-        <!-- Contenido Real -->
         <div id="content-view">
             <div class="movie-header">
                 <img id="movie-poster" class="movie-poster-preview" src="" alt="Poster" style="display: none;">
                 <h2 id="movie-title" class="movie-title">Cargando...</h2>
             </div>
-            <!-- Panel informativo sobre si la pareja ya calificó -->
             <div class="status-panel">
                 <div class="status-title">Estado de la Calificación</div>
                 <div id="rating-status-text" class="status-text">
@@ -249,12 +240,10 @@
                     Ninguno ha calificado esta película aún.
                 </div>
             </div>
-            <!-- Sección de visualización de opiniones mutuas -->
             <div id="reviews-section" class="reviews-section">
                 <div class="reviews-title">Nuestras Opiniones</div>
                 <div id="reviews-list"></div>
             </div>
-            <!-- Formulario de Calificación -->
             <form id="ratingForm">
                 <div class="stars-container">
                     <input type="radio" id="star10" name="rating" value="10">
@@ -292,28 +281,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchMovieData();
         });
-        // Extraer IDs necesarios
         const coupleId = document.getElementById('coupleId').value;
         const userId = document.getElementById('userId').value;
-        
-        // Obtener el ID de la película desde la variable enviada por backend en el render
         const movieId = document.getElementById('movieId').value; 
-        
-        // Referencias a elementos del DOM
         const loadingView = document.getElementById('loading-view');
         const contentView = document.getElementById('content-view');
         const ratingForm = document.getElementById('ratingForm');
         const feedbackMsg = document.getElementById('form-feedback');
         const submitBtn = document.getElementById('submit-btn');
-        // Función para cargar los datos de la película y el estado de los ratings
         async function fetchMovieData() {
             try {
-                // Hacer petición GET a la ruta indicada: /api/coupleMovie/:idcouple/:id
                 const response = await fetch(`/api/coupleMovie/${coupleId}/${movieId}`);
                 if (!response.ok) throw new Error('Error al obtener la película');
                 
                 const movie  = await response.json();
-                // Actualizar UI con datos de la película
                 document.getElementById('movie-title').textContent = movie.movieName || 'Película Desconocida';
                 
                 if (movie.moviePoster) {
@@ -321,13 +302,9 @@
                     posterImg.src = `https://image.tmdb.org/t/p/w500${movie.moviePoster}`;
                     posterImg.style.display = 'block';
                 }
-                
-                // Analizar calificaciones previas
                 const ratings = movie.ratings || [];
                 updateStatusPanel(ratings);
                 renderReviews(ratings);
-                
-                // Mostrar contenido
                 loadingView.style.display = 'none';
                 contentView.style.display = 'block';
             } catch (error) {
@@ -336,11 +313,9 @@
                 loadingView.style.color = '#ef4444';
             }
         }
-        // Función para actualizar el badge y texto informativo
         function updateStatusPanel(ratings) {
             const statusText = document.getElementById('rating-status-text');
             const totalRatings = ratings.length;
-            // Verificar si el usuario actual ya calificó
             const userAlreadyRated = ratings.some(rating => rating.userId === userId);
             
             if (totalRatings === 0) {
@@ -357,8 +332,6 @@
                 disableForm();
             }
         }
-        
-        // Renderizar las reviews (Tanto la del usuario como la de su pareja)
         function renderReviews(ratings) {
             const reviewsSection = document.getElementById('reviews-section');
             const reviewsList = document.getElementById('reviews-list');
@@ -368,17 +341,12 @@
                 reviewsSection.style.display = 'none';
                 return;
             }
-            // Habilitar visualización de la sección si hay al menos una reseña
             reviewsSection.style.display = 'block';
             
             ratings.forEach(r => {
                 const isMe = r.userId === userId;
-                
-                // Generar representación visual de calificación de 10 estrellas máx
                 const ratingCount = Math.round(r.rating) || 0;
                 const starsHtml = '★'.repeat(ratingCount) + '☆'.repeat(10 - ratingCount);
-                
-                // Generación de la tarjeta iterativa indicando de quién es
                 const card = document.createElement('div');
                 card.className = `review-card ${isMe ? 'me' : 'partner'}`;
                 card.innerHTML = `
@@ -397,16 +365,12 @@
         function disableForm() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Ya calificada / Actualización inhabilitada';
-            
-            // Ocultamos el formulario entero en su lugar para simplificar y dar espacio a las revisiones
             ratingForm.style.display = 'none';
         }
-        // Manejo del POST para enviar la puntuación
         ratingForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             feedbackMsg.style.display = 'none';
             feedbackMsg.className = 'feedback-message';
-            // Validar estrellas
             const checkedStar = document.querySelector('input[name="rating"]:checked');
             if (!checkedStar) {
                 feedbackMsg.textContent = 'Por favor, selecciona una puntuación de 1 a 10 estrellas.';
@@ -430,13 +394,11 @@
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Error al guardar la calificación');
                 }
-                // Éxito
                 feedbackMsg.textContent = '¡Tu calificación ha sido guardada con éxito!';
                 feedbackMsg.classList.add('alert-success');
                 feedbackMsg.style.display = 'block';
-                // Recargar estado actual (o redirigir)
                 setTimeout(() => {
-                    fetchMovieData(); // Refresca para ver el estado actualizado
+                    fetchMovieData();
                 }, 1500);
             } catch (error) {
                 console.error(error);

@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autenticación</title>
     <style>
-        /* --- ESTILOS INCRUSTADOS (Mismo tema índigo) --- */
         :root {
-            --primary-color: #4f46e5; /* Índigo Principal */
+            --primary-color: #4f46e5;
             --primary-hover: #4338ca;
             --bg-color: #f3f4f6;
             --text-color: #1f2937;
@@ -36,7 +35,6 @@
             text-align: center;
         }
 
-        /* --- Pestañas (Tabs) --- */
         .tabs {
             display: flex;
             margin-bottom: 2rem;
@@ -114,7 +112,6 @@
             background-color: var(--primary-hover);
         }
 
-        /* Clase para ocultar elementos */
         .hidden {
             display: none;
         }
@@ -168,17 +165,14 @@
     <script>
 
         function openTab(evt, tabName) {
-            // 1. Ocultar todos los formularios
             document.getElementById('login-form').classList.add('hidden');
             document.getElementById('register-form').classList.add('hidden');
 
-            // 2. Quitar la clase 'active' de todos los botones de pestaña
             const tabLinks = document.getElementsByClassName('tab-btn');
             for (let i = 0; i < tabLinks.length; i++) {
                 tabLinks[i].classList.remove('active');
             }
 
-            // 3. Mostrar el formulario actual y activar el botón clickeado
             document.getElementById(tabName + '-form').classList.remove('hidden');
             evt.currentTarget.classList.add('active');
             
@@ -190,7 +184,6 @@
             if(registerForm) {
                 registerForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    // Aqui se podria agregar logica para el registro
                     const formData = new FormData(registerForm)
                     const name = formData.get('username')
                     const email = formData.get('email')
@@ -217,12 +210,10 @@
                 });
             }
 
-        // Login
         const loginForm = document.getElementById('login-form');
         if(loginForm) {
             loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                // Aqui se podria agregar logica para el login
                 const formData = new FormData(loginForm)
                 const email = formData.get('email')
                 const password = formData.get('password')

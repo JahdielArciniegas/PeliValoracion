@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cartelera de Películas</title>
     <style>
-        /* --- ESTILOS (Mismo tema índigo que el Login/Perfil) --- */
         :root {
             --primary-color: #4f46e5;
             --primary-hover: #4338ca;
@@ -35,11 +34,10 @@
             border-radius: 12px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 1000px; /* Ancho para cartelera */
+            max-width: 1000px;
             text-align: center;
         }
 
-        /* --- Buscador --- */
         .search-section {
             display: flex;
             gap: 10px;
@@ -74,7 +72,6 @@
 
         .btn-search:hover { background-color: var(--primary-hover); }
 
-        /* --- Pestañas (Categorías) --- */
         .tabs {
             display: flex;
             margin-bottom: 2rem;
@@ -104,7 +101,6 @@
             border-bottom: 2px solid var(--primary-color);
         }
 
-        /* --- Grilla de Películas --- */
         .movies-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -191,10 +187,7 @@
         }
         .error { color: #ef4444; }
 
-        /* ... Tus estilos anteriores ... */
-
 .movie-poster {
-    /* Necesario para posicionar la capa encima */
     position: relative; 
     width: 100%;
     height: 270px;
@@ -205,24 +198,21 @@
     overflow: hidden;
 }
 
-/* La capa oscura oculta */
 .card-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente oscuro */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    opacity: 0; /* Invisible por defecto */
+    opacity: 0;
     transition: opacity 0.3s ease;
     gap: 10px;
 }
-
-/* Al pasar el mouse sobre la TARJETA, mostramos la capa del poster */
 .movie-card:hover .card-overlay {
     opacity: 1;
 }
@@ -237,7 +227,7 @@
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
-    transform: translateY(20px); /* Efecto de entrada */
+    transform: translateY(20px);
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
@@ -255,7 +245,6 @@
 </head>
 <body>
 
-    <!-- Navegación -->
     <% if (session && session.user && session.user.user) { %>
     <nav style="width: 100%; max-width: 1000px; background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
         <div style="font-weight: 700; color: var(--primary-color); font-size: 1.2rem;">Peli Pareja</div>
@@ -287,57 +276,42 @@
     </div>
 
     <script>
-        // URL base de tu router (ajusta si tus rutas tienen prefijo, ej: '/api')
         const BASE_URL = 'api/movie'; 
 
-        // Al cargar la página, mostramos "En Cartelera" por defecto
         document.addEventListener('DOMContentLoaded', () => {
             loadCategory('now-playing', document.querySelector('.tab-btn.active'));
         });
-
-        // Función para cambiar de categoría
         function loadCategory(endpoint, btnElement) {
-            // 1. Actualizar Tabs Visualmente
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
 
-            // 2. Llamar a la API
             fetchMovies(endpoint);
         }
 
-        // Función de búsqueda
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
 
-            // Desactivar tabs visualmente porque estamos buscando
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            // Usar tu endpoint: /search/:query
             fetchMovies(`search?q=${query}`);
         }
-
-        // Permitir buscar al presionar Enter
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') performSearch();
         });
 
-        // Lógica Principal de Fetch y Renderizado
         async function fetchMovies(endpoint) {
             const grid = document.getElementById('grid');
             grid.innerHTML = '<div class="loading">Cargando películas...</div>';
 
             try {
-                // Hacemos la petición a tus rutas: /nowplaying, /search/batman, etc.
                 const response = await fetch(`${BASE_URL}/${endpoint}`);
                 
                 if (!response.ok) throw new Error('Error en la red');
 
                 const data = await response.json();
                 
-                // NOTA: Asumo que tus endpoints devuelven { results: [...] } o un array directo [...]
-                // Ajusta esta línea según la respuesta real de tu backend:
                 const movies = data.results || data; 
 
                 renderGrid(movies);
@@ -348,7 +322,6 @@
             }
         }
 
-        // Función para pintar el HTML
         function renderGrid(movies) {
     const grid = document.getElementById('grid');
     grid.innerHTML = ''; 
@@ -398,12 +371,10 @@
     });
 }
 
-// Nueva función para manejar el click del botón
 async function markAsSeen(event, movie) {
-    event.stopPropagation(); // Evita que se dispare el click de la tarjeta
-    event.preventDefault(); // Previene comportamientos extraños
+    event.stopPropagation();
+    event.preventDefault();
     const coupleId = document.getElementById('coupleId').value;
-    // Aquí puedes hacer un fetch a tu backend para guardar
     const movieObj = JSON.parse(decodeURIComponent(movie))
     const response = await fetch('/api/coupleMovie', {
         method: 'POST',
@@ -418,11 +389,10 @@ async function markAsSeen(event, movie) {
         })
     });
     
-    // Feedback visual simple (cambia el texto del botón temporalmente)
     const btn = event.target;
     const originalText = btn.innerText;
     
-    btn.style.backgroundColor = '#10b981'; // Verde éxito
+    btn.style.backgroundColor = '#10b981';
     btn.style.color = 'white';
     btn.innerText = '✓ Guardado';
     
