@@ -12,8 +12,9 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = jwt.verify(token, JWT_SECRET);
     req.session.user = data as UserData | null;
-  } catch {}
-
+  } catch {
+    req.session.user = null;
+  }
   next();
 };
 
