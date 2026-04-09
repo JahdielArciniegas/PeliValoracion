@@ -5,7 +5,7 @@ interface UserRating {
 }
 
 export interface CoupleMovie {
-  id?: any;
+  id?: string;
   coupleId: string;
   movieId: string;
   movieName: string;

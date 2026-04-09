@@ -13,7 +13,7 @@ const coupleMovieSchema = new mongoose.Schema({
 
 coupleMovieSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    const obj = returnedObject as Record<string, any>;
+    const obj = returnedObject as Record<string, unknown>;
     obj.id = obj._id;
     delete obj._id;
     delete obj.__v;

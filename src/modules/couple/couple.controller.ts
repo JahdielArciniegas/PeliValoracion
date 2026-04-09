@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { coupleServices } from "./couple.service.js";
+import type { Couple } from "./couple.js";
 
 const getCoupleCode = async (
   req: Request,
@@ -37,7 +38,7 @@ const changeName = async (req: Request, res: Response, next: NextFunction) => {
     }
     const { name, users } = req.body;
     const coupleUpdate = { name, users };
-    const couple = await coupleServices.changeName(id, coupleUpdate as any);
+    const couple = await coupleServices.changeName(id, coupleUpdate as Couple);
     res.status(200).json(couple);
   } catch (error) {
     next(error);

@@ -1,6 +1,6 @@
 export interface Couple {
-  id?: any;
+  id?: string;
   name?: string & undefined;
   users: string[];
-  movies: any[];
+  movies: string[];
 }

@@ -1,7 +1,7 @@
 import type { Types } from "mongoose";
 
 export interface User {
-  id?: any;
+  id?: string;
   name: string;
   email: string;
   password: string;
