@@ -39,7 +39,7 @@ const markMovieWatched = async (movie: CoupleMovie) => {
     throw new InternalServerError("Error marking movie watched");
   }
   coupleExists.movies.push(result._id);
-  await coupleRepositories.update(coupleExists.id, coupleExists);
+  await coupleRepositories.update(coupleExists.id as string, coupleExists);
   return result;
 };
 
