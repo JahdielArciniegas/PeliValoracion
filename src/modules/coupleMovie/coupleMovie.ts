@@ -1,14 +1,14 @@
 interface UserRating {
-  userId: string;
-  opinion: string;
-  rating: number;
+  userId: string
+  opinion: string
+  rating: number
 }
 
 export interface CoupleMovie {
-  id?: string;
-  coupleId: string;
-  movieId: string;
-  movieName: string;
-  moviePoster: string;
-  ratings: UserRating[];
+  id?: string
+  coupleId: string
+  movieId: string
+  movieName: string
+  moviePoster: string
+  ratings: UserRating[]
 }

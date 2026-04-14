@@ -1,35 +1,35 @@
-import { coupleControllers } from "./couple.controller.js";
-import express from "express";
-import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { coupleControllers } from './couple.controller.js'
+import express from 'express'
+import { validateRequest } from '../../shared/middleware/validateRequest.js'
 import {
   coupleCreateSchema,
   coupleValidateSchema,
   coupleChangeNameSchema,
   coupleRemoveSchema,
-} from "./couple.schema.js";
+} from './couple.schema.js'
 
-const coupleRouter = express.Router();
+const coupleRouter = express.Router()
 
 coupleRouter.post(
-  "/getCode",
+  '/getCode',
   validateRequest(coupleCreateSchema),
-  coupleControllers.getCoupleCode,
-);
+  coupleControllers.getCoupleCode
+)
 coupleRouter.put(
-  "/validate",
+  '/validate',
   validateRequest(coupleValidateSchema),
-  coupleControllers.validateCouple,
-);
+  coupleControllers.validateCouple
+)
 coupleRouter.put(
-  "/:id",
+  '/:id',
   validateRequest(coupleChangeNameSchema),
-  coupleControllers.changeName,
-);
-coupleRouter.get("/:id", coupleControllers.getOneCouple);
+  coupleControllers.changeName
+)
+coupleRouter.get('/:id', coupleControllers.getOneCouple)
 coupleRouter.delete(
-  "/:id",
+  '/:id',
   validateRequest(coupleRemoveSchema),
-  coupleControllers.removeCouple,
-);
+  coupleControllers.removeCouple
+)
 
-export default coupleRouter;
+export default coupleRouter

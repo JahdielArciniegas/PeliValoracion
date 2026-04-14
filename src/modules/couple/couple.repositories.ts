@@ -1,28 +1,28 @@
-import type { Couple as CoupleInterface } from "./couple.js";
-import Couple from "./couple.model.js";
+import type { Couple as CoupleInterface } from './couple.js'
+import Couple from './couple.model.js'
 
 const create = async (id: string) => {
   const newCouple = new Couple({
-    name: "",
+    name: '',
     users: [id],
-  });
-  const result = await newCouple.save();
-  return result;
-};
+  })
+  const result = await newCouple.save()
+  return result
+}
 
 const getOne = async (id: string) => {
-  const result = await Couple.findById<CoupleInterface>(id);
-  return result;
-};
+  const result = await Couple.findById<CoupleInterface>(id)
+  return result
+}
 
 const update = async (id: string, couple: CoupleInterface) => {
-  const result = await Couple.findByIdAndUpdate(id, couple, { new: true });
-  return result;
-};
+  const result = await Couple.findByIdAndUpdate(id, couple, { new: true })
+  return result
+}
 
 const remove = async (id: string) => {
-  const result = await Couple.findByIdAndDelete(id);
-  return result;
-};
+  const result = await Couple.findByIdAndDelete(id)
+  return result
+}
 
-export const coupleRepositories = { create, getOne, update, remove };
+export const coupleRepositories = { create, getOne, update, remove }

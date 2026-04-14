@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const coupleMovieSchema = new mongoose.Schema({
   movieId: String,
@@ -6,20 +6,20 @@ const coupleMovieSchema = new mongoose.Schema({
   moviePoster: String,
   coupleId: {
     type: mongoose.Types.ObjectId,
-    ref: "Couple",
+    ref: 'Couple',
   },
   ratings: Array,
-});
+})
 
-coupleMovieSchema.set("toJSON", {
+coupleMovieSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    const obj = returnedObject as Record<string, unknown>;
-    obj.id = obj._id;
-    delete obj._id;
-    delete obj.__v;
+    const obj = returnedObject as Record<string, unknown>
+    obj.id = obj._id
+    delete obj._id
+    delete obj.__v
   },
-});
+})
 
-const CoupleMovie = mongoose.model("CoupleMovie", coupleMovieSchema);
+const CoupleMovie = mongoose.model('CoupleMovie', coupleMovieSchema)
 
-export default CoupleMovie;
+export default CoupleMovie

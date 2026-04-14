@@ -1,44 +1,53 @@
-import type { NextFunction, Request, Response } from "express";
-import { authService } from "./auth.service.js";
+import type { NextFunction, Request, Response } from 'express'
+import { authService } from './auth.service.js'
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { user: currentUser } = req.session;
-    const { email, password } = req.body;
-    const { user, token } = await authService.login(email, password, currentUser?.id);
+    const { user: currentUser } = req.session
+    const { email, password } = req.body
+    const { user, token } = await authService.login(
+      email,
+      password,
+      currentUser?.id
+    )
     res
-      .cookie("access_token", token, {
+      .cookie('access_token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: 'strict',
       })
       .status(200)
-      .json(user);
+      .json(user)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { user: currentUser } = req.session;
-    const { name, email, password } = req.body;
-    const user = await authService.register(name, email, password, currentUser?.id);
-    res.status(201).json(user);
+    const { user: currentUser } = req.session
+    const { name, email, password } = req.body
+    const user = await authService.register(
+      name,
+      email,
+      password,
+      currentUser?.id
+    )
+    res.status(201).json(user)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     res
-      .clearCookie("access_token")
+      .clearCookie('access_token')
       .status(200)
-      .json({ message: "Logout successful" });
+      .json({ message: 'Logout successful' })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
-export const authController = { login, register, logout };
+export const authController = { login, register, logout }
