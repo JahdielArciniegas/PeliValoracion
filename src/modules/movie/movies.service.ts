@@ -7,7 +7,9 @@ const nowPlayingMovies = async () => {
     return movies
   }
   const result = await tmdb.movies.nowPlaying({ language: 'es' })
-  await redisClient.set('now_playing_movies', JSON.stringify(result.results))
+  await redisClient.set('now_playing_movies', JSON.stringify(result.results), {
+    ex: 60 * 60 * 24,
+  })
   return result.results
 }
 
@@ -17,7 +19,9 @@ const popularMovies = async () => {
     return movies
   }
   const result = await tmdb.movies.popular({ language: 'es' })
-  await redisClient.set('popular_movies', JSON.stringify(result.results))
+  await redisClient.set('popular_movies', JSON.stringify(result.results), {
+    ex: 60 * 60 * 24,
+  })
   return result.results
 }
 
@@ -27,7 +31,9 @@ const topRatedMovies = async () => {
     return movies
   }
   const result = await tmdb.movies.topRated({ language: 'es' })
-  await redisClient.set('top_rated_movies', JSON.stringify(result.results))
+  await redisClient.set('top_rated_movies', JSON.stringify(result.results), {
+    ex: 60 * 60 * 24,
+  })
   return result.results
 }
 
