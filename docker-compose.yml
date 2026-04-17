@@ -1,0 +1,44 @@
+services:
+  pelivalo:
+    image: pelivalo
+    container_name: pelivalo-api
+    ports:
+      - '3003:3003'
+    build: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/pelivalo
+      - REDIS_URL=http://serverless-redis-http:80
+      - REDIS_TOKEN=codigosecreto
+      - API_KEY=${API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    command: npm run dev
+    depends_on:
+      - mongodb
+      - redis
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-db:/data/db
+  redis:
+    image: redis:8.4.2-alpine3.22
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+  serverless-redis-http:
+    ports:
+      - '8079:80'
+    image: hiett/serverless-redis-http:latest
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: codigosecreto
+      SRH_CONNECTION_STRING: 'redis://redis:6379'
+    depends_on:
+      - redis
+volumes:
+  mongo-db:
+  redis-data:
