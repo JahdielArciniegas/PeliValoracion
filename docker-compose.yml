@@ -48,7 +48,7 @@ services:
       - '3004:3003'
     build: .
     environment:
-      - MONGO_URL=mongodb://mongodb-test:27018/pelivalo
+      - MONGO_URL=mongodb://mongodb-test:27017/pelivalo
       - REDIS_URL=http://serverless-redis-http:80
       - REDIS_TOKEN=codigosecreto
       - API_KEY=${API_KEY}
@@ -57,13 +57,13 @@ services:
     depends_on:
       - mongodb-test
       - redis
-    mongodb-test:
-      image: mongo
-      container_name: mongodb-test
-      ports:
-        - '27018:27017'
-      volumes:
-        - mongo-db-test:/data/db
+  mongodb-test:
+    image: mongo
+    container_name: mongodb-test
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongo-db-test:/data/db
 volumes:
   mongo-db:
   mongo-db-test:
