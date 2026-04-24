@@ -36,6 +36,13 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules", "dist", "jest.config.js", "eslint.config.ts"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test/**/*",
+    "**/*.test.ts",
+    "vitest.config.ts",
+    "eslint.config.ts"
+  ]
 }
