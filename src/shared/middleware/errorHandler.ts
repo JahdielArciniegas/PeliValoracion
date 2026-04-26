@@ -1,6 +1,11 @@
-import type { Request, Response } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 
-export default function errorHandler(err: Error, _req: Request, res: Response) {
+export default function errorHandler(
+  err: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) {
   if (err.name === 'ValidationError') {
     return res.status(400).json({ message: err.message })
   }
