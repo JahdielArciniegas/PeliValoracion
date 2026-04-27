@@ -1,4 +1,4 @@
-import { describe, test, afterAll, expect, beforeAll } from 'vitest'
+import { describe, test, afterAll, expect, beforeAll, afterEach } from 'vitest'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../src/app.js'
@@ -18,13 +18,11 @@ const userTest2 = {
   password: 'password2',
 }
 
-const initialUserDatabase = [
-  {
-    name: 'test',
-    email: 'test@gmail.com',
-    password: 'password',
-  },
-]
+const initialUserDatabase = {
+  name: 'test',
+  email: 'test@gmail.com',
+  password: 'password',
+}
 
 const invalidUser = {
   name: 'test',
@@ -44,7 +42,7 @@ beforeAll(async () => {
 
   await User.deleteMany({})
 
-  await User.insertMany(initialUserDatabase)
+  await api.post('/api/auth/register').send(initialUserDatabase)
 })
 
 describe('register tests', () => {
@@ -85,6 +83,63 @@ describe('register tests', () => {
   })
 })
 
+describe('login tests', () => {
+  test('Login con email en uppercase', async () => {
+    const response = await api
+      .post('/api/auth/login')
+      .send({ email: 'TEST@gmail.com', password: 'password' })
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('name')
+    expect(response.body).toHaveProperty('email')
+    expect(response.body).toHaveProperty('coupleId')
+  })
+
+  test('Login con un usuario no registrado', async () => {
+    const response = await api
+      .post('/api/auth/login')
+      .send({ email: 'test3@gmail.com', password: '123345' })
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.status).toBe(404)
+  })
+
+  test('Login con una contraseña invalida', async () => {
+    const response = await api
+      .post('/api/auth/login')
+      .send({ email: 'test@gmail.com', password: '123' })
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.status).toBe(401)
+  })
+
+  test('Credenciales invalidas', async () => {
+    const response = await api
+      .post('/api/auth/login')
+      .send(invalidUser)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.status).toBe(400)
+  })
+
+  test('Login con credenciales validas', async () => {
+    const response = await api
+      .post('/api/auth/login')
+      .send(userTest)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('name')
+    expect(response.body).toHaveProperty('email')
+    expect(response.body).toHaveProperty('coupleId')
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
+})
+
+afterEach(async () => {
+  await api.post('/api/auth/logout')
 })
