@@ -6,6 +6,7 @@ import {
   NotFoundError,
   InternalServerError,
   ValidationError,
+  UnauthorizedError,
 } from '../../shared/utils/errors.js'
 import { JWT_SECRET } from '../../shared/config/dotenv.js'
 import dbConnect from '../../shared/db/connectionMongoDB.js'
@@ -53,8 +54,9 @@ const login = async (
     throw new ValidationError('Email and password are required')
   const emailLower = email.toLowerCase()
   const user = await userRepositories.getOneByEmail(emailLower)
-  const isPasswordValid = await bcrypt.compare(password, user!.password)
-  if (!user || !isPasswordValid) throw new NotFoundError('Invalid credentials')
+  if (!user) throw new NotFoundError('User not found')
+  const isPasswordValid = await bcrypt.compare(password, user.password)
+  if (!isPasswordValid) throw new UnauthorizedError('Invalid credentials')
   const userToken = {
     id: user.id,
     name: user.name,
