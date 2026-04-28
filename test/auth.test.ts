@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../src/app.js'
 import User from '../src/modules/user/user.model.js'
+import { authService } from '../src/modules/auth/auth.service.js'
 
 const api = supertest(app)
 
@@ -16,12 +17,6 @@ const userTest2 = {
   name: 'test2',
   email: 'test2@gmail.com',
   password: 'password2',
-}
-
-const initialUserDatabase = {
-  name: 'test',
-  email: 'test@gmail.com',
-  password: 'password',
 }
 
 const invalidUser = {
@@ -42,7 +37,12 @@ beforeAll(async () => {
 
   await User.deleteMany({})
 
-  await api.post('/api/auth/register').send(initialUserDatabase)
+  await authService.register(
+    userTest.name,
+    userTest.email,
+    userTest.password,
+    ''
+  )
 })
 
 describe('register tests', () => {
