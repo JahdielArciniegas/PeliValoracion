@@ -72,7 +72,7 @@ POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/logout
 
-GET /api/couple/getCode
+GET /api/couple/get-code
 POST /api/couple/validate
 PUT /api/couple/:id
 GET /api/couple/:id

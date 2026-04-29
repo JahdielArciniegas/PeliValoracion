@@ -11,7 +11,7 @@ import {
 const coupleRouter = express.Router()
 
 coupleRouter.post(
-  '/getCode',
+  '/get-code',
   validateRequest(coupleCreateSchema),
   coupleControllers.getCoupleCode
 )
