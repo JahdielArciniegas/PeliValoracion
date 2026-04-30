@@ -7,9 +7,13 @@ import {
   ValidationError,
 } from '../../shared/utils/errors.js'
 import dbConnect from '../../shared/db/connectionMongoDB.js'
+import { Types } from 'mongoose'
 
 const getCode = async (id: string) => {
   await dbConnect()
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ValidationError('User ID is not valid')
+  }
   const user = await userRepositories.getOneById(id)
   if (!user) {
     throw new NotFoundError('User not found')
