@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 mongoose.set('strictQuery', false)
 
 if (!MONGO_URL) {
-  throw new Error('Por favor, define la variable MONGO_URL en Vercel')
+  throw new Error('Por favor, define la variable MONGO_URL')
 }
 
 const options = {
