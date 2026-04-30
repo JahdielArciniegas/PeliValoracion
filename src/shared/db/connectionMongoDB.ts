@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MONGO_URL } from '../config/dotenv.js'
 import mongoose from 'mongoose'
 
@@ -7,14 +8,39 @@ if (!MONGO_URL) {
   throw new Error('Por favor, define la variable MONGO_URL')
 }
 
-const options = {
-  serverSelectionTimeoutMS: 5000,
+let cached = (global as any).mongoose
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null }
 }
-
 async function dbConnect() {
-  if (mongoose.connection.readyState >= 1) return
+  if (cached.conn) {
+    return cached.conn
+  }
 
-  return mongoose.connect(MONGO_URL as string, options)
+  if (!cached.promise) {
+    const options = {
+      bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    }
+    cached.promise = mongoose
+      .connect(MONGO_URL as string, options)
+      .then((mongoose) => {
+        console.log('MongoDB conectado')
+        return mongoose.connect
+      })
+  }
+
+  try {
+    cached.conn = await cached.promise
+  } catch (error) {
+    cached.promise = null
+    throw error
+  }
+
+  return cached.conn
 }
 
 export default dbConnect
