@@ -20,6 +20,18 @@ const userTest2 = {
   password: 'password',
 }
 
+const userTest3 = {
+  name: 'test3',
+  email: 'testcouple3@gmail.com',
+  password: 'password',
+}
+
+const userTest4 = {
+  name: 'test4',
+  email: 'testcouple4@gmail.com',
+  password: 'password',
+}
+
 let cookie: string
 
 beforeAll(async () => {
@@ -39,6 +51,18 @@ beforeAll(async () => {
     userTest2.name,
     userTest2.email,
     userTest2.password,
+    ''
+  )
+  await authService.register(
+    userTest3.name,
+    userTest3.email,
+    userTest3.password,
+    ''
+  )
+  await authService.register(
+    userTest4.name,
+    userTest4.email,
+    userTest4.password,
     ''
   )
 
@@ -109,6 +133,143 @@ describe('get code couple', () => {
 
     expect(response.status).toBe(400)
     expect(response.body).toHaveProperty('message', 'User already has a couple')
+  })
+})
+
+describe('validate couple', () => {
+  test('validar una couple con un id invalido', async () => {
+    await api.post('/api/auth/logout')
+
+    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+
+    cookie = loginResponse3.headers['set-cookie']
+    expect(loginResponse3.body.id).toBeDefined()
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({ id: '12345566', userId: loginResponse3.body.id })
+    expect(response.status).toBe(400)
+  })
+
+  test('validar couple con un codigo inexistente', async () => {
+    await api.post('/api/auth/logout')
+
+    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+
+    cookie = loginResponse3.headers['set-cookie']
+    expect(loginResponse3.body.id).toBeDefined()
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({ id: '692bc5d7f4eb5ed723b325ae', userId: loginResponse3.body.id })
+    expect(response.status).toBe(404)
+  })
+
+  test('validar couple con un id de usuario inexistente', async () => {
+    const user = await User.findOne({ email: userTest.email })
+
+    expect(user).toBeDefined()
+    expect(user?._id).toBeDefined()
+
+    await api.post('/api/auth/logout')
+
+    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+
+    cookie = loginResponse3.headers['set-cookie']
+    expect(loginResponse3.body.id).toBeDefined()
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({
+        id: user?.coupleId?.toString(),
+        userId: '692bc5d7f4eb5ed723b325ae',
+      })
+    expect(response.status).toBe(404)
+  })
+
+  test('validar couple que ya esta completa', async () => {
+    const user = await User.findOne({ email: userTest.email })
+
+    expect(user).toBeDefined()
+    expect(user?._id).toBeDefined()
+
+    const code = await api
+      .post('/api/couple/get-code')
+      .set('Cookie', cookie)
+      .send({ id: user?._id?.toString() })
+
+    await api.post('/api/auth/logout')
+
+    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+
+    cookie = loginResponse3.headers['set-cookie']
+    expect(loginResponse3.body.id).toBeDefined()
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({ id: code.body.id, userId: loginResponse3.body.id })
+    expect(response.status).toBe(400)
+  })
+
+  test('validar un codigo con un usuario que ya tiene pareja', async () => {
+    const user = await User.findOne({ email: userTest.email })
+
+    expect(user).toBeDefined()
+    expect(user?._id).toBeDefined()
+
+    await api.post('/api/auth/logout')
+
+    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+
+    cookie = loginResponse3.headers['set-cookie']
+    expect(loginResponse3.body.id).toBeDefined()
+
+    const code = await api
+      .post('/api/couple/get-code')
+      .set('Cookie', cookie)
+      .send({ id: loginResponse3.body.id })
+
+    expect(code.status).toBe(201)
+    expect(code.body.id).toBeDefined()
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({ id: code.body.id, userId: user?._id?.toString() })
+    expect(response.status).toBe(200)
+  })
+
+  test('validar un codigo correctamente', async () => {
+    await api.post('/api/auth/logout')
+
+    const loginResponse2 = await api.post('/api/auth/login').send(userTest2)
+    cookie = loginResponse2.headers['set-cookie']
+    expect(loginResponse2.body.id).toBeDefined()
+
+    const code = await api
+      .post('/api/couple/get-code')
+      .set('Cookie', cookie)
+      .send({ id: loginResponse2.body.id })
+
+    expect(code.status).toBe(201)
+    expect(code.body.id).toBeDefined()
+
+    await api.post('/api/auth/logout')
+    const loginResponse4 = await api.post('/api/auth/login').send(userTest4)
+    cookie = loginResponse4.headers['set-cookie']
+
+    const response = await api
+      .put('/api/couple/validate')
+      .set('Cookie', cookie)
+      .send({ id: code.body.id, userId: loginResponse4.body.id })
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('id')
+    expect(response.body).toHaveProperty('users')
+    expect(response.body.users).toHaveLength(2)
   })
 })
 
