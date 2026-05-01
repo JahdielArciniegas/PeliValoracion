@@ -43,6 +43,11 @@ const validateCouple = async (id: string, userId: string) => {
   if (!user) {
     throw new NotFoundError('User not found')
   }
+
+  if (user.coupleId) {
+    await removeCouple(user.coupleId.toString())
+  }
+
   const couple = await coupleRepositories.getOne(id)
   if (!couple) {
     throw new NotFoundError('Couple not found')
@@ -87,6 +92,10 @@ const removeCouple = async (id: string) => {
   }
   await dbConnect()
   const couple = await coupleRepositories.remove(id)
+  if (!couple) {
+    throw new NotFoundError('Couple not found')
+  }
+  await userRepositories.clearCoupleReference(id)
   return couple
 }
 
