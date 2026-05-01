@@ -35,6 +35,9 @@ const getCode = async (id: string) => {
 }
 
 const validateCouple = async (id: string, userId: string) => {
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
+    throw new ValidationError('IDs are not valid')
+  }
   await dbConnect()
   const user = await userRepositories.getOneById(userId)
   if (!user) {
@@ -64,6 +67,9 @@ const validateCouple = async (id: string, userId: string) => {
 }
 
 const changeName = async (id: string, couple: Couple) => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ValidationError('Couple ID is not valid')
+  }
   await dbConnect()
   if (couple.name === null || couple.name === undefined) {
     throw new ValidationError('Couple name is required')
@@ -76,12 +82,18 @@ const changeName = async (id: string, couple: Couple) => {
 }
 
 const removeCouple = async (id: string) => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ValidationError('Couple ID is not valid')
+  }
   await dbConnect()
   const couple = await coupleRepositories.remove(id)
   return couple
 }
 
 const getOneCouple = async (id: string) => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ValidationError('Couple ID is not valid')
+  }
   await dbConnect()
   const couple = await coupleRepositories.getOne(id)
   return couple

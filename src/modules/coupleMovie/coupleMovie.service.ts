@@ -7,8 +7,15 @@ import {
   ValidationError,
 } from '../../shared/utils/errors.js'
 import dbConnect from '../../shared/db/connectionMongoDB.js'
+import { Types } from 'mongoose'
 
 const markMovieWatched = async (movie: CoupleMovie) => {
+  if (
+    !Types.ObjectId.isValid(movie.coupleId) ||
+    !Types.ObjectId.isValid(movie.movieId)
+  ) {
+    throw new ValidationError('IDs are not valid')
+  }
   await dbConnect()
   if (
     !movie.coupleId ||
@@ -50,6 +57,9 @@ const ratingMovie = async (
   rating: number,
   opinion: string
 ) => {
+  if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(coupleId)) {
+    throw new ValidationError('IDs are not valid')
+  }
   await dbConnect()
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId)
 
@@ -94,12 +104,18 @@ const ratingMovie = async (
 }
 
 const getMovieWatched = async (coupleId: string, movieId: string) => {
+  if (!Types.ObjectId.isValid(coupleId)) {
+    throw new ValidationError('Couple ID is not valid')
+  }
   await dbConnect()
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId)
   return movie
 }
 
 const getAllMoviesWatched = async (coupleId: string) => {
+  if (!Types.ObjectId.isValid(coupleId)) {
+    throw new ValidationError('Couple ID is not valid')
+  }
   await dbConnect()
   const movies = await coupleMoviesRepository.getCoupleMovies(coupleId)
   return movies
