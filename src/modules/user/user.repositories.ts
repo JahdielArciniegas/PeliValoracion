@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import type { User as UserInterface, UserUpdate } from './user.js'
 import User from './user.model.js'
 
@@ -29,6 +30,14 @@ const update = async (user: UserUpdate) => {
   return result
 }
 
+const clearCoupleReference = async (id: string) => {
+  const result = await User.updateMany(
+    { coupleId: new Types.ObjectId(id) as unknown as string },
+    { $set: { coupleId: '' } }
+  )
+  return result
+}
+
 const remove = async (id: string) => {
   const result = await User.deleteOne({ _id: id })
   return result
@@ -40,4 +49,5 @@ export const userRepositories = {
   getOneById,
   update,
   remove,
+  clearCoupleReference,
 }
