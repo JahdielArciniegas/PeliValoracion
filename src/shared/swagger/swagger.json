@@ -135,20 +135,25 @@
         "responses": { "200": { "description": "Usuario eliminado" } }
       }
     },
-    "/couple/getCode/{userId}": {
-      "get": {
+    "/couple/get-code": {
+      "post": {
         "tags": ["couple"],
         "summary": "Obtener código de vinculación para el usuario",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" }
+                }
+              }
+            }
           }
-        ],
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": "Código obtenido",
             "content": {
               "application/json": {
