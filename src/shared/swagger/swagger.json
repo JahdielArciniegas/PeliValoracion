@@ -39,14 +39,19 @@
         },
         "responses": {
           "200": {
-            "description": "Login exitoso",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/AuthResponse" }
               }
             }
           },
-          "401": { "description": "Credenciales inválidas" }
+          "400": [
+            { "description": "User should not have a session" },
+            { "description": "Email and password are required" }
+          ],
+          "401": { "description": "Credenciales inválidas" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal server error" }
         }
       }
     },
@@ -71,23 +76,36 @@
                 "schema": { "$ref": "#/components/schemas/AuthResponse" }
               }
             }
+          },
+          "400": [
+            {
+              "description": "User should not have a session"
+            },
+            {
+              "description": "Name, email and password are required"
+            },
+            {
+              "description": "User already exists"
+            }
+          ],
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/auth/logout": {
-      "get": {
+      "post": {
         "tags": ["auth"],
         "summary": "Logout de un usuario",
-        "parameters": [
-          {
-            "name": "idSession",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "string" }
+        "responses": {
+          "200": {
+            "description": "Logout exitoso"
+          },
+          "500": {
+            "description": "Internal server error"
           }
-        ],
-        "responses": { "200": { "description": "Logout exitoso" } }
+        }
       }
     },
     "/user/{id}": {
@@ -118,7 +136,14 @@
                 "schema": { "$ref": "#/components/schemas/User" }
               }
             }
-          }
+          },
+          "400": [
+            { "description": "Email is required" },
+            { "description": "User name is required" }
+          ],
+          "401": [{ "description": "Id is required for update" }],
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal server error" }
         }
       },
       "delete": {
@@ -132,7 +157,15 @@
             "schema": { "type": "string" }
           }
         ],
-        "responses": { "200": { "description": "Usuario eliminado" } }
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado"
+          },
+          "400": { "description": "User ID is not valid" },
+          "401": { "description": "Id is required for remove" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal server error" }
+        }
       }
     },
     "/couple/get-code": {
@@ -160,28 +193,29 @@
                 "schema": { "$ref": "#/components/schemas/Couple" }
               }
             }
-          }
+          },
+          "400": [
+            { "description": "User ID is not valid" },
+            { "description": "User already has a couple" }
+          ],
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal server error" }
         }
       }
     },
-    "/couple/validate/{userId}": {
+    "/couple/validate": {
       "put": {
         "tags": ["couple"],
         "summary": "Validar y vincular pareja",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": { "code": { "type": "string" } }
+                "properties": {
+                  "id": { "type": "string" },
+                  "userId": { "type": "string" }
+                }
               }
             }
           }
@@ -194,7 +228,16 @@
                 "schema": { "$ref": "#/components/schemas/Couple" }
               }
             }
-          }
+          },
+          "400": [
+            { "description": "IDs are not valid" },
+            { "description": "Couple is full" }
+          ],
+          "404": [
+            { "description": "Couple not found" },
+            { "description": "User not found" }
+          ],
+          "500": { "description": "Error updating couple" }
         }
       }
     },
@@ -218,7 +261,8 @@
                 "schema": { "$ref": "#/components/schemas/Couple" }
               }
             }
-          }
+          },
+          "400": { "description": "Couple ID is not valid" }
         }
       },
       "put": {
@@ -242,7 +286,21 @@
             }
           }
         },
-        "responses": { "200": { "description": "Nombre actualizado" } }
+        "responses": {
+          "200": {
+            "description": "Nombre actualizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Couple" }
+              }
+            }
+          },
+          "400": [
+            { "description": "Couple ID is not valid" },
+            { "description": "Couple name is required" },
+            { "description": "Couple name must be at least 3 characters long" }
+          ]
+        }
       },
       "delete": {
         "tags": ["couple"],
@@ -255,7 +313,18 @@
             "schema": { "type": "string" }
           }
         ],
-        "responses": { "200": { "description": "Pareja eliminada" } }
+        "responses": {
+          "200": {
+            "description": "Pareja eliminada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Couple" }
+              }
+            }
+          },
+          "400": { "description": "Couple ID is not valid" },
+          "404": { "description": "Couple not found" }
+        }
       }
     },
     "/coupleMovie": {
@@ -278,7 +347,18 @@
             }
           }
         },
-        "responses": { "200": { "description": "Película marcada como vista" } }
+        "responses": {
+          "200": {
+            "description": "Película marcada como vista"
+          },
+          "400": [
+            { "description": "IDs are not valid" },
+            { "description": "Invalid movie data" },
+            { "description": "Movie already watched" }
+          ],
+          "404": { "description": "Couple not found" },
+          "500": { "description": "Error marking movie as watched" }
+        }
       }
     },
     "/coupleMovie/{coupleId}": {
@@ -306,7 +386,41 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Couple ID is not valid"
           }
+        }
+      }
+    },
+    "/coupleMovie/{coupleId}/{movieId}": {
+      "get": {
+        "tags": ["coupleMovie"],
+        "summary": "Obtener una película vista por la pareja",
+        "parameters": [
+          {
+            "name": "coupleId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Película obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MovieWatched" }
+              }
+            }
+          },
+          "400": { "description": "Couple ID is not valid" }
         }
       }
     },
@@ -342,7 +456,17 @@
             }
           }
         },
-        "responses": { "200": { "description": "Calificación guardada" } }
+        "responses": {
+          "200": { "description": "Calificación guardada" },
+          "400": [
+            { "description": "IDs are not valid" },
+            { "description": "User already rated this movie" },
+            { "description": "Invalid rating data" },
+            { "description": "Rating must be between 1 and 10" },
+            { "description": "Movie must have at least 2 ratings" }
+          ],
+          "404": { "description": "Movie not found" }
+        }
       }
     },
     "/movies/search": {
