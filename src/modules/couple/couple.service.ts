@@ -71,18 +71,22 @@ const validateCouple = async (id: string, userId: string) => {
   return newCouple
 }
 
-const changeName = async (id: string, couple: Couple) => {
+const changeName = async (id: string, name: string) => {
   if (!Types.ObjectId.isValid(id)) {
     throw new ValidationError('Couple ID is not valid')
   }
   await dbConnect()
-  if (couple.name === null || couple.name === undefined) {
+  if (name === null || name === undefined) {
     throw new ValidationError('Couple name is required')
   }
-  if ((couple.name as string).length < 3) {
+  if (name.length < 3) {
     throw new ValidationError('Couple name must be at least 3 characters long')
   }
-  const updatedCouple = await coupleRepositories.update(id, couple)
+  const couple = await coupleRepositories.getOne(id)
+  if (!couple) {
+    throw new NotFoundError('Couple not found')
+  }
+  const updatedCouple = await coupleRepositories.updateName(id, name)
   return updatedCouple
 }
 

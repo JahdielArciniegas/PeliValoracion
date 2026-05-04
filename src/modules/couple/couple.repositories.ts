@@ -20,9 +20,14 @@ const update = async (id: string, couple: CoupleInterface) => {
   return result
 }
 
+const updateName = async (id: string, name: string) => {
+  const result = await Couple.findByIdAndUpdate(id, { name }, { new: true })
+  return result
+}
+
 const remove = async (id: string) => {
   const result = await Couple.findByIdAndDelete(id)
   return result
 }
 
-export const coupleRepositories = { create, getOne, update, remove }
+export const coupleRepositories = { create, getOne, update, updateName, remove }
