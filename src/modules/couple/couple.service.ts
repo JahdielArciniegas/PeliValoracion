@@ -79,9 +79,6 @@ const changeName = async (id: string, name: string) => {
   if (name === null || name === undefined) {
     throw new ValidationError('Couple name is required')
   }
-  if (name.length < 3) {
-    throw new ValidationError('Couple name must be at least 3 characters long')
-  }
   const couple = await coupleRepositories.getOne(id)
   if (!couple) {
     throw new NotFoundError('Couple not found')
