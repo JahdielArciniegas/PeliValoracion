@@ -273,6 +273,38 @@ describe('validate couple', () => {
   })
 })
 
+describe('change name couple', () => {
+  test('cambiar el nombre de una pareja que no existe', async () => {
+    const response = await api
+      .put('/api/couple/692bc5d7f4eb5ed723b325ae')
+      .set('Cookie', cookie)
+      .send({ name: 'couple name' })
+    expect(response.status).toBe(404)
+  })
+
+  test('cambiar el nombre de una pareja por uno demasiado corto', async () => {
+    const user = await User.findOne({ email: userTest.email })
+    const response = await api
+      .put(`/api/couple/${user?.coupleId?.toString()}`)
+      .set('Cookie', cookie)
+      .send({ name: 'co' })
+    expect(response.status).toBe(400)
+    console.log(response.body)
+    expect(response.body).toHaveProperty('errors')
+  })
+
+  test('cambiar el nombre de una pareja correctamente', async () => {
+    const user = await User.findOne({ email: userTest.email })
+    const response = await api
+      .put(`/api/couple/${user?.coupleId?.toString()}`)
+      .set('Cookie', cookie)
+      .send({ name: 'couple name' })
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('name')
+    expect(response.body.name).toBe('couple name')
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
