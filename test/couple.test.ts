@@ -289,7 +289,6 @@ describe('change name couple', () => {
       .set('Cookie', cookie)
       .send({ name: 'co' })
     expect(response.status).toBe(400)
-    console.log(response.body)
     expect(response.body).toHaveProperty('errors')
   })
 
