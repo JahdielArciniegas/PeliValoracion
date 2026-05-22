@@ -72,8 +72,8 @@ POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/logout
 
-GET /api/couple/get-code
-POST /api/couple/validate
+POST /api/couple/code
+PUT /api/couple/code/validate
 PUT /api/couple/:id
 GET /api/couple/:id
 DELETE /api/couple/:id

@@ -11,12 +11,12 @@ import {
 const coupleRouter = express.Router()
 
 coupleRouter.post(
-  '/get-code',
+  '/code',
   validateRequest(coupleCreateSchema),
   coupleControllers.getCoupleCode
 )
 coupleRouter.put(
-  '/validate',
+  '/code/validate',
   validateRequest(coupleValidateSchema),
   coupleControllers.validateCouple
 )

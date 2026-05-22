@@ -74,7 +74,7 @@ beforeAll(async () => {
 describe('get code couple', () => {
   test('Pedir el codigo con un id invalido', async () => {
     const response = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: '12345566' })
 
@@ -83,7 +83,7 @@ describe('get code couple', () => {
 
   test('Pedir el codigo con un usuario no existente', async () => {
     const response = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: '692bc5d7f4eb5ed723b325ae' })
 
@@ -97,7 +97,7 @@ describe('get code couple', () => {
     expect(user?._id).toBeDefined()
 
     const response = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: user?._id?.toString() })
 
@@ -108,7 +108,7 @@ describe('get code couple', () => {
   test('Pedir el codigo con un usuario que ya tiene un codigo', async () => {
     const user = await User.findOne({ email: userTest.email })
     const code = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: user?._id?.toString() })
 
@@ -120,14 +120,14 @@ describe('get code couple', () => {
     expect(loginResponse2.body.id).toBeDefined()
 
     const validate = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: code.body.id, userId: loginResponse2.body.id })
 
     expect(validate.status).toBe(200)
 
     const response = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: loginResponse2.body.id })
 
@@ -146,7 +146,7 @@ describe('validate couple', () => {
     expect(loginResponse3.body.id).toBeDefined()
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: '12345566', userId: loginResponse3.body.id })
     expect(response.status).toBe(400)
@@ -161,7 +161,7 @@ describe('validate couple', () => {
     expect(loginResponse3.body.id).toBeDefined()
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: '692bc5d7f4eb5ed723b325ae', userId: loginResponse3.body.id })
     expect(response.status).toBe(404)
@@ -181,7 +181,7 @@ describe('validate couple', () => {
     expect(loginResponse3.body.id).toBeDefined()
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({
         id: user?.coupleId?.toString(),
@@ -197,7 +197,7 @@ describe('validate couple', () => {
     expect(user?._id).toBeDefined()
 
     const code = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: user?._id?.toString() })
 
@@ -209,7 +209,7 @@ describe('validate couple', () => {
     expect(loginResponse3.body.id).toBeDefined()
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: code.body.id, userId: loginResponse3.body.id })
     expect(response.status).toBe(400)
@@ -229,7 +229,7 @@ describe('validate couple', () => {
     expect(loginResponse3.body.id).toBeDefined()
 
     const code = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: loginResponse3.body.id })
 
@@ -237,7 +237,7 @@ describe('validate couple', () => {
     expect(code.body.id).toBeDefined()
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: code.body.id, userId: user?._id?.toString() })
     expect(response.status).toBe(200)
@@ -251,7 +251,7 @@ describe('validate couple', () => {
     expect(loginResponse2.body.id).toBeDefined()
 
     const code = await api
-      .post('/api/couple/get-code')
+      .post('/api/couple/code')
       .set('Cookie', cookie)
       .send({ id: loginResponse2.body.id })
 
@@ -263,7 +263,7 @@ describe('validate couple', () => {
     cookie = loginResponse4.headers['set-cookie']
 
     const response = await api
-      .put('/api/couple/validate')
+      .put('/api/couple/code/validate')
       .set('Cookie', cookie)
       .send({ id: code.body.id, userId: loginResponse4.body.id })
     expect(response.status).toBe(200)

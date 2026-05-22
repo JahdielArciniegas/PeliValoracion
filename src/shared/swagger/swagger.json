@@ -168,7 +168,7 @@
         }
       }
     },
-    "/couple/get-code": {
+    "/couple/code": {
       "post": {
         "tags": ["couple"],
         "summary": "Obtener código de vinculación para el usuario",
@@ -203,7 +203,7 @@
         }
       }
     },
-    "/couple/validate": {
+    "/couple/code/validate": {
       "put": {
         "tags": ["couple"],
         "summary": "Validar y vincular pareja",

@@ -274,7 +274,7 @@
         validateCodeForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const partnerCode = document.getElementById('partnerCode').value;
-            const response = await fetch('/api/couple/validate', {
+            const response = await fetch('/api/couple/code/validate', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -298,7 +298,7 @@
 
         async function getCode(event) {
             event.preventDefault();
-            const response = await fetch('/api/couple/get-code', {
+            const response = await fetch('/api/couple/code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
