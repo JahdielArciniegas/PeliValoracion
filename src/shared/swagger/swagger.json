@@ -327,7 +327,7 @@
         }
       }
     },
-    "/coupleMovie": {
+    "/coupleMovie/{coupleId}": {
       "post": {
         "tags": ["coupleMovie"],
         "summary": "Marcar película como vista",
@@ -347,6 +347,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "coupleId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Película marcada como vista"
@@ -359,9 +367,7 @@
           "404": { "description": "Couple not found" },
           "500": { "description": "Error marking movie as watched" }
         }
-      }
-    },
-    "/coupleMovie/{coupleId}": {
+      },
       "get": {
         "tags": ["coupleMovie"],
         "summary": "Listar todas las películas vistas por la pareja",
@@ -393,7 +399,7 @@
         }
       }
     },
-    "/coupleMovie/{coupleId}/{movieId}": {
+    "/coupleMovie/{coupleId}/movies/{movieId}": {
       "get": {
         "tags": ["coupleMovie"],
         "summary": "Obtener una película vista por la pareja",
@@ -424,7 +430,7 @@
         }
       }
     },
-    "/coupleMovie/{coupleId}/{movieId}/rating": {
+    "/coupleMovie/{coupleId}/movies/{movieId}/rating": {
       "post": {
         "tags": ["coupleMovie"],
         "summary": "Calificar una película vista",

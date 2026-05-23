@@ -83,10 +83,10 @@ GET /api/movies/now-playing
 GET /api/movies/top-rated
 GET /api/movies/popular
 
-POST /api/coupleMovies/
-POST /api/coupleMovies/couple/:coupleId/movie/:movieId/rating
-GET /api/coupleMovies/:coupleId/:movieId
-GET /api/coupleMovies/:coupleId
+POST /api/coupleMovie/:coupleId
+POST /api/coupleMovie/:coupleId/movies/:movieId/rating
+GET /api/coupleMovie/:coupleId/movies/:movieId
+GET /api/coupleMovie/:coupleId
 
 # Documentación
 

@@ -2,7 +2,8 @@ import type { Request, Response } from 'express'
 import { coupleMovieService } from './coupleMovie.service.js'
 
 const markMovieWatched = async (req: Request, res: Response) => {
-  const { coupleId, movieId, movieName, moviePoster } = req.body
+  const { movieId, movieName, moviePoster } = req.body
+  const coupleId = req.params.coupleId as string
 
   await coupleMovieService.markMovieWatched({
     coupleId,

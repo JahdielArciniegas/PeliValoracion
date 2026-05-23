@@ -376,13 +376,12 @@ async function markAsSeen(event, movie) {
     event.preventDefault();
     const coupleId = document.getElementById('coupleId').value;
     const movieObj = JSON.parse(decodeURIComponent(movie))
-    const response = await fetch('/api/coupleMovie', {
+    const response = await fetch(`/api/coupleMovie/${coupleId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            coupleId: coupleId,
             movieId: String(movieObj.movieId),
             movieName: movieObj.movieName,
             moviePoster: movieObj.moviePoster

@@ -9,17 +9,17 @@ import {
 const coupleMovieRouter = express.Router({ mergeParams: true })
 
 coupleMovieRouter.post(
-  '/',
+  '/:coupleId',
   validateRequest(coupleMovieCreateSchema),
   coupleMoviesController.markMovieWatched
 )
 coupleMovieRouter.get(
-  '/:coupleId/:movieId',
+  '/:coupleId/movies/:movieId',
   coupleMoviesController.getMovieWatched
 )
 coupleMovieRouter.get('/:coupleId', coupleMoviesController.getAllMoviesWatched)
 coupleMovieRouter.post(
-  '/couple/:coupleId/movie/:movieId/rating',
+  '/:coupleId/movies/:movieId/rating',
   validateRequest(coupleMovieRateSchema),
   coupleMoviesController.ratingMovie
 )

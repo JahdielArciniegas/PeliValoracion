@@ -342,7 +342,7 @@
       async function fetchMovieData() {
         try {
           const response = await fetch(
-            `/api/coupleMovie/${coupleId}/${movieId}`
+            `/api/coupleMovie/${coupleId}/movies/${movieId}`
           )
           if (!response.ok) throw new Error('Error al obtener la película')
 
@@ -443,7 +443,7 @@
         const opinionText = document.getElementById('opinion').value.trim()
         try {
           const response = await fetch(
-            `/api/coupleMovie/couple/${coupleId}/movie/${movieId}/rating`,
+            `/api/coupleMovie/couple/${coupleId}/movies/${movieId}/rating`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
