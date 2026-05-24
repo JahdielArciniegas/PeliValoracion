@@ -443,7 +443,7 @@
         const opinionText = document.getElementById('opinion').value.trim()
         try {
           const response = await fetch(
-            `/api/coupleMovie/couple/${coupleId}/movies/${movieId}/rating`,
+            `/api/coupleMovie/${coupleId}/movies/${movieId}/rating`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
