@@ -17,6 +17,10 @@ export const coupleMovieSchema = z.object({
 export const coupleMovieCreateSchema = z.object({
   body: coupleMovieSchema.omit({
     ratings: true,
+    coupleId: true,
+  }),
+  params: coupleMovieSchema.pick({
+    coupleId: true,
   }),
 })
 
