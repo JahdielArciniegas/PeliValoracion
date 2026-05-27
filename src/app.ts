@@ -9,7 +9,7 @@ import verifyToken from './shared/middleware/verifyToken.js'
 import viewsRoutes from './view/views.routes.js'
 import cookieParser from 'cookie-parser'
 import path from 'node:path'
-// import rateLimiter from "./shared/middleware/rateLimiting.js";
+import rateLimiter from './shared/middleware/rateLimiting.js'
 import authRoutes from './modules/auth/auth.routes.js'
 const { default: swaggerDocument } = await import(
   './shared/swagger/swagger.json',
@@ -29,7 +29,7 @@ const options = {
   ],
 }
 const app = express()
-// app.use(rateLimiter);
+app.use(rateLimiter)
 app.use(express.json())
 app.set('view engine', 'ejs')
 app.set('views', path.join(process.cwd(), 'src/view'))
