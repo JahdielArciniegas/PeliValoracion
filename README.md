@@ -44,7 +44,8 @@
   - app.ts
   - index.ts
   - tmdb.ts
-- .env
+- .env <- Debes crearlo para que funcione la app
+- tests
 - .gitignore
 - README.md
 - package.json
@@ -68,24 +69,44 @@ REDIS_TOKEN=tu_redis_token
 
 # ENDPOINTS Principales
 
+### Auth
+
 POST /api/auth/register
+
 POST /api/auth/login
+
 POST /api/auth/logout
 
+### Couple
+
 POST /api/couple/code
+
 PUT /api/couple/code/validate
+
 PUT /api/couple/:id
+
 GET /api/couple/:id
+
 DELETE /api/couple/:id
 
+### Movies
+
 GET /api/movies/search
+
 GET /api/movies/now-playing
+
 GET /api/movies/top-rated
+
 GET /api/movies/popular
 
+### CoupleMovies
+
 POST /api/coupleMovie/:coupleId
+
 POST /api/coupleMovie/:coupleId/movies/:movieId/rating
+
 GET /api/coupleMovie/:coupleId/movies/:movieId
+
 GET /api/coupleMovie/:coupleId
 
 # Documentación
