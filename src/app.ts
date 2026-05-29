@@ -5,7 +5,6 @@ import swaggerUi from 'swagger-ui-express'
 import coupleMovieRouter from './modules/coupleMovie/coupleMovie.routes.js'
 import movieRouter from './modules/movie/movie.routes.js'
 import errorHandler from './shared/middleware/errorHandler.js'
-import verifyToken from './shared/middleware/verifyToken.js'
 import viewsRoutes from './view/views.routes.js'
 import cookieParser from 'cookie-parser'
 import path from 'node:path'
@@ -36,7 +35,6 @@ app.set('views', path.join(process.cwd(), 'src/view'))
 app.set('trust proxy', 1)
 app.use(cookieParser())
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options))
-app.use(verifyToken)
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/couple', coupleRoutes)

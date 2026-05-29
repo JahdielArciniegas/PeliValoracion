@@ -11,9 +11,10 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const data = jwt.verify(token, JWT_SECRET)
-    req.session.user = data as UserData | null
+    req.session.user = data as UserData
   } catch {
-    req.session.user = null
+    res.clearCookie('access_token')
+    return res.status(401).json({ message: 'Unauthorized' })
   }
   next()
 }
