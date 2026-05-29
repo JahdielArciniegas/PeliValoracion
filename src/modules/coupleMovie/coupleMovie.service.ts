@@ -10,11 +10,8 @@ import dbConnect from '../../shared/db/connectionMongoDB.js'
 import { Types } from 'mongoose'
 
 const markMovieWatched = async (movie: CoupleMovie) => {
-  if (
-    !Types.ObjectId.isValid(movie.coupleId) ||
-    !Types.ObjectId.isValid(movie.movieId)
-  ) {
-    throw new ValidationError('IDs are not valid')
+  if (!Types.ObjectId.isValid(movie.coupleId)) {
+    throw new ValidationError('ID is not valid')
   }
   await dbConnect()
   if (
