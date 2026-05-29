@@ -2,13 +2,8 @@ import type { Request, Response } from 'express'
 import { authService } from './auth.service.js'
 
 const login = async (req: Request, res: Response) => {
-  const { user: currentUser } = req.session
   const { email, password } = req.body
-  const { user, token } = await authService.login(
-    email,
-    password,
-    currentUser?.id
-  )
+  const { user, token } = await authService.login(email, password)
   res
     .cookie('access_token', token, {
       httpOnly: true,
@@ -20,14 +15,8 @@ const login = async (req: Request, res: Response) => {
 }
 
 const register = async (req: Request, res: Response) => {
-  const { user: currentUser } = req.session
   const { name, email, password } = req.body
-  const user = await authService.register(
-    name,
-    email,
-    password,
-    currentUser?.id
-  )
+  const user = await authService.register(name, email, password)
   res.status(201).json(user)
 }
 

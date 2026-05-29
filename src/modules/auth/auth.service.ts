@@ -11,16 +11,8 @@ import {
 import { JWT_SECRET } from '../../shared/config/dotenv.js'
 import dbConnect from '../../shared/db/connectionMongoDB.js'
 
-const register = async (
-  name: string,
-  email: string,
-  password: string,
-  idSession: string | undefined
-) => {
+const register = async (name: string, email: string, password: string) => {
   await dbConnect()
-  if (idSession) {
-    throw new ValidationError('User should not have a session')
-  }
   if (!name || !email || !password)
     throw new ValidationError('User name, email and password are required')
 
@@ -41,15 +33,8 @@ const register = async (
   return userCreate
 }
 
-const login = async (
-  email: string,
-  password: string,
-  idSession: string | undefined
-) => {
+const login = async (email: string, password: string) => {
   await dbConnect()
-  if (idSession) {
-    throw new ValidationError('User should not have a session')
-  }
   if (!email || !password)
     throw new ValidationError('Email and password are required')
   const emailLower = email.toLowerCase()
