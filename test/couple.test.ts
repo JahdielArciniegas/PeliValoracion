@@ -41,29 +41,21 @@ beforeAll(async () => {
 
   await Promise.all([User.deleteMany({}), Couple.deleteMany({})])
 
-  await authService.register(
-    userTest.name,
-    userTest.email,
-    userTest.password,
-    ''
-  )
+  await authService.register(userTest.name, userTest.email, userTest.password)
   await authService.register(
     userTest2.name,
     userTest2.email,
-    userTest2.password,
-    ''
+    userTest2.password
   )
   await authService.register(
     userTest3.name,
     userTest3.email,
-    userTest3.password,
-    ''
+    userTest3.password
   )
   await authService.register(
     userTest4.name,
     userTest4.email,
-    userTest4.password,
-    ''
+    userTest4.password
   )
 
   const loginResponse = await api.post('/api/auth/login').send(userTest)

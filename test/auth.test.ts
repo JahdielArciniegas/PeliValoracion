@@ -37,12 +37,7 @@ beforeAll(async () => {
 
   await User.deleteMany({})
 
-  await authService.register(
-    userTest.name,
-    userTest.email,
-    userTest.password,
-    ''
-  )
+  await authService.register(userTest.name, userTest.email, userTest.password)
 })
 
 describe('register tests', () => {
