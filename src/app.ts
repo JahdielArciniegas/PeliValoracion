@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser'
 import path from 'node:path'
 import rateLimiter from './shared/middleware/rateLimiting.js'
 import authRoutes from './modules/auth/auth.routes.js'
+import verifyToken from './shared/middleware/verifyToken.js'
 const { default: swaggerDocument } = await import(
   './shared/swagger/swagger.json',
   {
@@ -35,12 +36,13 @@ app.set('views', path.join(process.cwd(), 'src/view'))
 app.set('trust proxy', 1)
 app.use(cookieParser())
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options))
-app.use('/api/user', userRoutes)
+app.use('/', viewsRoutes)
 app.use('/api/auth', authRoutes)
+app.use(verifyToken)
+app.use('/api/user', userRoutes)
 app.use('/api/couple', coupleRoutes)
 app.use('/api/coupleMovie', coupleMovieRouter)
 app.use('/api/movie', movieRouter)
-app.use('/', viewsRoutes)
 app.use(errorHandler)
 
 export default app
