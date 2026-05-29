@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 const loginRegister = (req: Request, res: Response) => {
-  const session = req.session
+  const session = req.session || { user: null }
   res.render('login-register', { session })
 }
 
