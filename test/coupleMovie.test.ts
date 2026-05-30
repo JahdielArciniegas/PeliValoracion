@@ -23,17 +23,23 @@ const userTest2 = {
   password: 'password',
 }
 
+const userTest3 = {
+  name: 'test3',
+  email: 'testcouplemovie3@gmail.com',
+  password: 'password',
+}
+
 const movieTest = {
   movieId: '1234',
   movieName: 'test',
   moviePoster: 'test',
 }
 
-// const movieTest2 = {
-//   movieId: '1235',
-//   movieName: 'test',
-//   moviePoster: 'test',
-// }
+const movieTest2 = {
+  movieId: '1235',
+  movieName: 'test',
+  moviePoster: 'test',
+}
 
 const badMovieTest = {
   movieId: '1234',
@@ -44,6 +50,8 @@ const badMovieTest = {
 let cookie: string
 let coupleId: string
 let id: string
+let id2: string
+let id3: string
 
 beforeAll(async () => {
   if (mongoose.connection.readyState === 0) {
@@ -66,7 +74,16 @@ beforeAll(async () => {
     userTest2.email,
     userTest2.password
   )
-  id = user2.id.toString()
+
+  const user3 = await authService.register(
+    userTest3.name,
+    userTest3.email,
+    userTest3.password
+  )
+
+  id = user1.id.toString()
+  id2 = user2.id.toString()
+  id3 = user3.id.toString()
 
   const coupleTest = {
     users: [user1.id, user2.id],
@@ -130,6 +147,128 @@ describe('mark movie watched', () => {
       .send(movieTest)
 
     expect(response.status).toBe(400)
+  })
+})
+
+describe('Rating Couple Movie', () => {
+  test('Rankear una pelicula sin estar marcada como vista', async () => {
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest2.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id2,
+      })
+
+    expect(response.status).toBe(404)
+  })
+
+  test('Rankear una pelicula ya rankeada por el usuario', async () => {
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id2,
+      })
+
+    expect(response.status).toBe(200)
+
+    const response2 = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id2,
+      })
+
+    expect(response2.status).toBe(400)
+  })
+
+  test('Rankear una pelicula con un string invalido', async () => {
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({ rating: 10, userId: id })
+
+    expect(response.status).toBe(400)
+  })
+
+  test('Rankear una pelicula con un rating fura de 1-10', async () => {
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 11,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id,
+      })
+
+    expect(response.status).toBe(400)
+  })
+
+  test('Rankear una pelicula con mas de 2 personas', async () => {
+    await api
+      .post(`/api/coupleMovie/${coupleId}`)
+      .set('Cookie', cookie)
+      .send(movieTest2)
+
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest2.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id,
+      })
+
+    expect(response.status).toBe(200)
+
+    const response2 = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest2.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id2,
+      })
+
+    expect(response2.status).toBe(200)
+
+    const response3 = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest2.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id3,
+      })
+
+    expect(response3.status).toBe(400)
+  })
+
+  test('Rankear una pelicula correctamente', async () => {
+    const response = await api
+      .post(`/api/coupleMovie/${coupleId}/movies/${movieTest.movieId}/rating`)
+      .set('Cookie', cookie)
+      .send({
+        rating: 10,
+        opinion:
+          'muy buena la verdad esta increible, me gusto mucho es muy buena',
+        userId: id,
+      })
+
+    expect(response.status).toBe(200)
   })
 })
 
