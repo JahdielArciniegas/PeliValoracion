@@ -106,6 +106,9 @@ const getOneCouple = async (id: string) => {
   }
   await dbConnect()
   const couple = await coupleRepositories.getOne(id)
+  if (!couple) {
+    throw new NotFoundError('Couple not found')
+  }
   return couple
 }
 
