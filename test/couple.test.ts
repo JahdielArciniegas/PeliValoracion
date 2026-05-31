@@ -296,6 +296,26 @@ describe('change name couple', () => {
   })
 })
 
+describe('get couple', () => {
+  test('get a couple que no existe', async () => {
+    const response = await api
+      .get('/api/couple/692bc5d7f4eb5ed723b326ae')
+      .set('Cookie', cookie)
+    expect(response.status).toBe(404)
+  })
+
+  test('get a couple correctamente', async () => {
+    const user = await User.findOne({ email: userTest.email })
+    const response = await api
+      .get(`/api/couple/${user?.coupleId?.toString()}`)
+      .set('Cookie', cookie)
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('id')
+    expect(response.body).toHaveProperty('users')
+    expect(response.body.users).toHaveLength(2)
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
