@@ -10,6 +10,7 @@ declare global {
       session: {
         user?: UserData | null
       }
+      user?: UserData | null
     }
   }
 }

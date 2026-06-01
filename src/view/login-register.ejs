@@ -118,7 +118,7 @@
     </style>
 </head>
 <body>
-    <% if (session.user) { %>
+    <% if (user) { %>
         <div class="auth-container">
             <h2>El usuario ya esta loggueado</h2>
             <button class="btn-submit" onclick="window.location.href='/home'">Ir al dashboard</button>
