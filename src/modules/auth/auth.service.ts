@@ -49,7 +49,7 @@ const login = async (email: string, password: string) => {
   }
   if (!JWT_SECRET) throw new InternalServerError('JWT secret not found')
 
-  const token = jwt.sign({ user: userToken }, JWT_SECRET, { expiresIn: '1h' })
+  const token = jwt.sign(userToken, JWT_SECRET, { expiresIn: '1h' })
   return { user, token }
 }
 
