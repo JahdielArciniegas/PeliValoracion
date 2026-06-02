@@ -2,7 +2,6 @@ import { coupleControllers } from './couple.controller.js'
 import express from 'express'
 import { validateRequest } from '../../shared/middleware/validateRequest.js'
 import {
-  coupleCreateSchema,
   coupleValidateSchema,
   coupleChangeNameSchema,
   coupleRemoveSchema,
@@ -10,11 +9,7 @@ import {
 
 const coupleRouter = express.Router()
 
-coupleRouter.post(
-  '/code',
-  validateRequest(coupleCreateSchema),
-  coupleControllers.getCoupleCode
-)
+coupleRouter.post('/code', coupleControllers.getCoupleCode)
 coupleRouter.put(
   '/code/validate',
   validateRequest(coupleValidateSchema),
