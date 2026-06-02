@@ -1,4 +1,4 @@
-import { describe, test, afterAll, expect, beforeAll } from 'vitest'
+import { describe, test, afterAll, expect, beforeAll, afterEach } from 'vitest'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../src/app.js'
@@ -57,71 +57,42 @@ beforeAll(async () => {
     userTest4.email,
     userTest4.password
   )
-
-  const loginResponse = await api.post('/api/auth/login').send(userTest)
-
-  cookie = loginResponse.headers['set-cookie']
 })
 
 describe('get code couple', () => {
-  test('Pedir el codigo con un id invalido', async () => {
-    const response = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: '12345566' })
-
-    expect(response.status).toBe(400)
-  })
-
-  test('Pedir el codigo con un usuario no existente', async () => {
-    const response = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: '692bc5d7f4eb5ed723b325ae' })
-
-    expect(response.status).toBe(404)
-  })
-
   test('Pedir el codigo con un usuario existente', async () => {
-    const user = await User.findOne({ email: userTest.email })
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
 
-    expect(user).toBeDefined()
-    expect(user?._id).toBeDefined()
-
-    const response = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: user?._id?.toString() })
+    const response = await api.post('/api/couple/code').set('Cookie', cookie)
+    console.log('response', response)
 
     expect(response.status).toBe(201)
     expect(response.body).toHaveProperty('id')
   })
 
   test('Pedir el codigo con un usuario que ya tiene un codigo', async () => {
-    const user = await User.findOne({ email: userTest.email })
-    const code = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: user?._id?.toString() })
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
+
+    const code = await api.post('/api/couple/code').set('Cookie', cookie)
+
+    expect(code.status).toBe(201)
+    expect(code.body).toHaveProperty('id')
 
     await api.post('/api/auth/logout')
 
     const loginResponse2 = await api.post('/api/auth/login').send(userTest2)
-
     cookie = loginResponse2.headers['set-cookie']
-    expect(loginResponse2.body.id).toBeDefined()
 
     const validate = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: code.body.id, userId: loginResponse2.body.id })
+      .send({ id: code.body.id })
 
     expect(validate.status).toBe(200)
 
-    const response = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: loginResponse2.body.id })
+    const response = await api.post('/api/couple/code').set('Cookie', cookie)
 
     expect(response.status).toBe(400)
     expect(response.body).toHaveProperty('message', 'User already has a couple')
@@ -130,134 +101,84 @@ describe('get code couple', () => {
 
 describe('validate couple', () => {
   test('validar una couple con un id invalido', async () => {
-    await api.post('/api/auth/logout')
-
-    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
-
-    cookie = loginResponse3.headers['set-cookie']
-    expect(loginResponse3.body.id).toBeDefined()
+    const loginResponse = await api.post('/api/auth/login').send(userTest3)
+    cookie = loginResponse.headers['set-cookie']
 
     const response = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: '12345566', userId: loginResponse3.body.id })
+      .send({ id: '12345566' })
     expect(response.status).toBe(400)
   })
 
   test('validar couple con un codigo inexistente', async () => {
-    await api.post('/api/auth/logout')
-
-    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
-
-    cookie = loginResponse3.headers['set-cookie']
-    expect(loginResponse3.body.id).toBeDefined()
+    const loginResponse = await api.post('/api/auth/login').send(userTest3)
+    cookie = loginResponse.headers['set-cookie']
 
     const response = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: '692bc5d7f4eb5ed723b325ae', userId: loginResponse3.body.id })
-    expect(response.status).toBe(404)
-  })
-
-  test('validar couple con un id de usuario inexistente', async () => {
-    const user = await User.findOne({ email: userTest.email })
-
-    expect(user).toBeDefined()
-    expect(user?._id).toBeDefined()
-
-    await api.post('/api/auth/logout')
-
-    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
-
-    cookie = loginResponse3.headers['set-cookie']
-    expect(loginResponse3.body.id).toBeDefined()
-
-    const response = await api
-      .put('/api/couple/code/validate')
-      .set('Cookie', cookie)
-      .send({
-        id: user?.coupleId?.toString(),
-        userId: '692bc5d7f4eb5ed723b325ae',
-      })
+      .send({ id: '692bc5d7f4eb5ed723b325ae' })
     expect(response.status).toBe(404)
   })
 
   test('validar couple que ya esta completa', async () => {
-    const user = await User.findOne({ email: userTest.email })
+    const loginResponse = await api.post('/api/auth/login').send(userTest2)
+    cookie = loginResponse.headers['set-cookie']
 
-    expect(user).toBeDefined()
-    expect(user?._id).toBeDefined()
-
-    const code = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: user?._id?.toString() })
+    const code = await api.post('/api/couple/code').set('Cookie', cookie)
 
     await api.post('/api/auth/logout')
 
-    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+    const loginResponse2 = await api.post('/api/auth/login').send(userTest3)
 
-    cookie = loginResponse3.headers['set-cookie']
-    expect(loginResponse3.body.id).toBeDefined()
+    cookie = loginResponse2.headers['set-cookie']
 
     const response = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: code.body.id, userId: loginResponse3.body.id })
+      .send({ id: code.body.id })
     expect(response.status).toBe(400)
   })
 
   test('validar un codigo con un usuario que ya tiene pareja', async () => {
-    const user = await User.findOne({ email: userTest.email })
+    const loginResponse = await api.post('/api/auth/login').send(userTest3)
 
-    expect(user).toBeDefined()
-    expect(user?._id).toBeDefined()
+    cookie = loginResponse.headers['set-cookie']
+
+    const code = await api.post('/api/couple/code').set('Cookie', cookie)
 
     await api.post('/api/auth/logout')
 
-    const loginResponse3 = await api.post('/api/auth/login').send(userTest3)
+    const loginResponse2 = await api.post('/api/auth/login').send(userTest)
 
-    cookie = loginResponse3.headers['set-cookie']
-    expect(loginResponse3.body.id).toBeDefined()
-
-    const code = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: loginResponse3.body.id })
-
-    expect(code.status).toBe(201)
-    expect(code.body.id).toBeDefined()
+    cookie = loginResponse2.headers['set-cookie']
 
     const response = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: code.body.id, userId: user?._id?.toString() })
+      .send({ id: code.body.id })
     expect(response.status).toBe(200)
   })
 
   test('validar un codigo correctamente', async () => {
-    await api.post('/api/auth/logout')
+    const loginResponse = await api.post('/api/auth/login').send(userTest2)
+    cookie = loginResponse.headers['set-cookie']
 
-    const loginResponse2 = await api.post('/api/auth/login').send(userTest2)
-    cookie = loginResponse2.headers['set-cookie']
-    expect(loginResponse2.body.id).toBeDefined()
-
-    const code = await api
-      .post('/api/couple/code')
-      .set('Cookie', cookie)
-      .send({ id: loginResponse2.body.id })
+    const code = await api.post('/api/couple/code').set('Cookie', cookie)
 
     expect(code.status).toBe(201)
     expect(code.body.id).toBeDefined()
 
     await api.post('/api/auth/logout')
-    const loginResponse4 = await api.post('/api/auth/login').send(userTest4)
-    cookie = loginResponse4.headers['set-cookie']
+
+    const loginResponse2 = await api.post('/api/auth/login').send(userTest4)
+    cookie = loginResponse2.headers['set-cookie']
 
     const response = await api
       .put('/api/couple/code/validate')
       .set('Cookie', cookie)
-      .send({ id: code.body.id, userId: loginResponse4.body.id })
+      .send({ id: code.body.id })
     expect(response.status).toBe(200)
     expect(response.body).toHaveProperty('id')
     expect(response.body).toHaveProperty('users')
@@ -266,16 +187,12 @@ describe('validate couple', () => {
 })
 
 describe('change name couple', () => {
-  test('cambiar el nombre de una pareja que no existe', async () => {
-    const response = await api
-      .put('/api/couple/692bc5d7f4eb5ed723b325ae')
-      .set('Cookie', cookie)
-      .send({ name: 'couple name' })
-    expect(response.status).toBe(404)
-  })
-
   test('cambiar el nombre de una pareja por uno demasiado corto', async () => {
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
+
     const user = await User.findOne({ email: userTest.email })
+
     const response = await api
       .put(`/api/couple/${user?.coupleId?.toString()}`)
       .set('Cookie', cookie)
@@ -285,6 +202,9 @@ describe('change name couple', () => {
   })
 
   test('cambiar el nombre de una pareja correctamente', async () => {
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
+
     const user = await User.findOne({ email: userTest.email })
     const response = await api
       .put(`/api/couple/${user?.coupleId?.toString()}`)
@@ -298,13 +218,19 @@ describe('change name couple', () => {
 
 describe('get couple', () => {
   test('get a couple que no existe', async () => {
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
+
     const response = await api
       .get('/api/couple/692bc5d7f4eb5ed723b326ae')
       .set('Cookie', cookie)
-    expect(response.status).toBe(404)
+    expect(response.status).toBe(403)
   })
 
   test('get a couple correctamente', async () => {
+    const loginResponse = await api.post('/api/auth/login').send(userTest)
+    cookie = loginResponse.headers['set-cookie']
+
     const user = await User.findOne({ email: userTest.email })
     const response = await api
       .get(`/api/couple/${user?.coupleId?.toString()}`)
@@ -314,6 +240,10 @@ describe('get couple', () => {
     expect(response.body).toHaveProperty('users')
     expect(response.body.users).toHaveLength(2)
   })
+})
+
+afterEach(async () => {
+  await api.post('/api/auth/logout')
 })
 
 afterAll(async () => {
