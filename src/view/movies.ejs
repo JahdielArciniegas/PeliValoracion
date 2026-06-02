@@ -245,7 +245,7 @@
 </head>
 <body>
 
-    <% if (user.user) { %>
+    <% if (user) { %>
     <nav style="width: 100%; max-width: 1000px; background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
         <div style="font-weight: 700; color: var(--primary-color); font-size: 1.2rem;">Peli Pareja</div>
         <div style="display: flex; gap: 1.5rem;">
@@ -256,7 +256,7 @@
     </nav>
     <% } %>
 
-    <input type="text" style="display: none;" id="coupleId" value="<%= user.user.coupleId %>">
+    <input type="text" style="display: none;" id="coupleId" value="<%= user.coupleId %>">
     <div class="main-container">
         
         <div class="search-section">
