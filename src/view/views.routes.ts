@@ -1,10 +1,10 @@
 import express from 'express'
 import { viewsController } from './views.controller.js'
-import isAuth from '../shared/middleware/auth.js'
+import isAuth from './auth.js'
 
 const viewsRoutes = express.Router()
 
-viewsRoutes.get('/', viewsController.loginRegister)
+viewsRoutes.get('/', isAuth, viewsController.loginRegister)
 viewsRoutes.get('/home', isAuth, viewsController.userCouple)
 viewsRoutes.get('/movies', isAuth, viewsController.movies)
 viewsRoutes.get('/coupleMovies', isAuth, viewsController.coupleMovies)

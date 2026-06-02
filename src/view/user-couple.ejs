@@ -184,7 +184,7 @@
 </head>
 <body>
 
-    <% if (session && session.user && session.user.user) { %>
+    <% if (user.user) { %>
     <nav style="width: 100%; max-width: 1000px; background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
         <div style="font-weight: 700; color: var(--primary-color); font-size: 1.2rem;">Peli Pareja</div>
         <div style="display: flex; gap: 1.5rem;">
@@ -195,7 +195,7 @@
     </nav>
     <% } %>
 
-    <% if (!session.user.user) { %>
+    <% if (!user.user) { %>
     <div class="auth-container">
             <h2>El usuario no esta loggueado</h2>
             <button class="btn-submit" onclick="window.location.href='/'">Ir a Login</button>
@@ -203,7 +203,7 @@
     <% } else { %>
         <div class="auth-container">
         <div class="tabs">
-            <input type="hidden" id="userId" value="<%= session.user.user.id %>">
+            <input type="hidden" id="userId" value="<%= user.user.id %>">
             <button class="tab-btn active" onclick="openTab(event, 'info')">Mi Perfil</button>
             <button class="tab-btn" onclick="openTab(event, 'link')">Vincular</button>
         </div>
@@ -211,13 +211,13 @@
         <div id="info-content" class="profile-section">
             <div class="info-label">Nombre de usuario</div>
             <div class="info-value">
-                <%= session.user.user.name %>
+                <%= user.user.name %>
             </div>
 
             <div class="info-label">Pareja Actual</div>
             <div class="info-value" style="border: none;">
-                <% if (session.user.user.coupleId !== '') { %>
-                    <span class="partner-badge">❤️ <%= session.user.user.coupleId %></span>
+                <% if (user.user.coupleId !== '') { %>
+                    <span class="partner-badge">❤️ <%= user.user.coupleId %></span>
                 <% } else { %>
                     <span style="color: var(--gray-text); font-style: italic;">Sin vincular</span>
                 <% } %>
@@ -233,7 +233,7 @@
             <form id="getCodeForm">
                 <div class="form-group">
                     <label for="partnerCode">Crea un codigo de pareja</label>
-                    <div class="info-value" id="coupleCode"><% if (session.user.user.coupleId !== '') { %><%= session.user.user.coupleId %><% } else { %><% } %></div>
+                    <div class="info-value" id="coupleCode"><% if (user.user.coupleId !== '') { %><%= user.user.coupleId %><% } else { %><% } %></div>
                 </div>
                 <button type="submit" onclick="getCode(event)" class="btn-submit">Crear Código</button>
             </form>
