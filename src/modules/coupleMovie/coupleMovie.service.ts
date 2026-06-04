@@ -5,15 +5,20 @@ import {
   NotFoundError,
   InternalServerError,
   ValidationError,
+  ForbiddenError,
 } from '../../shared/utils/errors.js'
 import dbConnect from '../../shared/db/connectionMongoDB.js'
 import { Types } from 'mongoose'
+import { userRepositories } from '../user/user.repositories.js'
 
-const markMovieWatched = async (movie: CoupleMovie) => {
-  if (!Types.ObjectId.isValid(movie.coupleId)) {
-    throw new ValidationError('ID is not valid')
+const markMovieWatched = async (userId: string, movie: CoupleMovie) => {
+  if (
+    !Types.ObjectId.isValid(movie.coupleId) ||
+    !Types.ObjectId.isValid(userId)
+  ) {
+    throw new ValidationError('IDs are not valid')
   }
-  await dbConnect()
+
   if (
     !movie.coupleId ||
     !movie.movieId ||
@@ -22,8 +27,24 @@ const markMovieWatched = async (movie: CoupleMovie) => {
   ) {
     throw new ValidationError('Invalid movie data')
   }
+  await dbConnect()
 
-  const coupleExists = await coupleRepositories.getOne(movie.coupleId)
+  const userExists = await userRepositories.getOneById(userId)
+
+  if (!userExists) {
+    throw new NotFoundError('User not found')
+  }
+  if (!userExists.coupleId) {
+    throw new ForbiddenError('User is not in a couple')
+  }
+
+  if (userExists.coupleId.toString() !== movie.coupleId) {
+    throw new ForbiddenError('User is not in the couple')
+  }
+
+  const coupleExists = await coupleRepositories.getOne(
+    userExists.coupleId.toString()
+  )
 
   if (!coupleExists) {
     throw new NotFoundError('Couple not found')
@@ -58,6 +79,13 @@ const ratingMovie = async (
     throw new ValidationError('IDs are not valid')
   }
   await dbConnect()
+  const userExists = await userRepositories.getOneById(userId)
+  if (!userExists) {
+    throw new NotFoundError('User not found')
+  }
+  if (!userExists.coupleId || userExists.coupleId.toString() !== coupleId) {
+    throw new ForbiddenError('User is not in the couple')
+  }
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId)
 
   if (!movie) {
@@ -100,20 +128,38 @@ const ratingMovie = async (
   return movieResult
 }
 
-const getMovieWatched = async (coupleId: string, movieId: string) => {
-  if (!Types.ObjectId.isValid(coupleId)) {
-    throw new ValidationError('Couple ID is not valid')
+const getMovieWatched = async (
+  userId: string,
+  coupleId: string,
+  movieId: string
+) => {
+  if (!Types.ObjectId.isValid(coupleId) || !Types.ObjectId.isValid(userId)) {
+    throw new ValidationError('IDs are not valid')
   }
   await dbConnect()
+  const userExists = await userRepositories.getOneById(userId)
+  if (!userExists) {
+    throw new NotFoundError('User not found')
+  }
+  if (!userExists.coupleId || userExists.coupleId.toString() !== coupleId) {
+    throw new ForbiddenError('User is not in the couple')
+  }
   const movie = await coupleMoviesRepository.getOneMovie(coupleId, movieId)
   return movie
 }
 
-const getAllMoviesWatched = async (coupleId: string) => {
-  if (!Types.ObjectId.isValid(coupleId)) {
-    throw new ValidationError('Couple ID is not valid')
+const getAllMoviesWatched = async (userId: string, coupleId: string) => {
+  if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(coupleId)) {
+    throw new ValidationError('IDs are not valid')
   }
   await dbConnect()
+  const userExists = await userRepositories.getOneById(userId)
+  if (!userExists) {
+    throw new NotFoundError('User not found')
+  }
+  if (!userExists.coupleId || userExists.coupleId.toString() !== coupleId) {
+    throw new ForbiddenError('User is not in the couple')
+  }
   const movies = await coupleMoviesRepository.getCoupleMovies(coupleId)
   return movies
 }

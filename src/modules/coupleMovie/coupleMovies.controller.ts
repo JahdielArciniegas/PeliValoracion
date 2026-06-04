@@ -4,45 +4,49 @@ import { coupleMovieService } from './coupleMovie.service.js'
 const markMovieWatched = async (req: Request, res: Response) => {
   const { movieId, movieName, moviePoster } = req.body
   const coupleId = req.params.coupleId as string
+  const userId = req.session?.user?.id
 
-  await coupleMovieService.markMovieWatched({
+  await coupleMovieService.markMovieWatched(userId as string, {
     coupleId,
     movieId,
     movieName,
     moviePoster,
     ratings: [],
   })
-  res.status(200).json({ message: 'Movie marked as watched' })
+  res.status(201).json({ message: 'Movie marked as watched' })
 }
 
 const getMovieWatched = async (req: Request, res: Response) => {
-  const idcouple = req.params.coupleId
-  const movieId = req.params.movieId
+  const { coupleId, movieId } = req.params
+  const userId = req.session?.user?.id
 
-  const movies = await coupleMovieService.getMovieWatched(
-    idcouple as string,
+  const movie = await coupleMovieService.getMovieWatched(
+    userId as string,
+    coupleId as string,
     movieId as string
   )
-  res.status(200).json(movies)
+  res.status(200).json(movie)
 }
 
 const getAllMoviesWatched = async (req: Request, res: Response) => {
-  const idcouple = req.params.coupleId
+  const { coupleId } = req.params
+  const userId = req.session?.user?.id
 
   const movies = await coupleMovieService.getAllMoviesWatched(
-    idcouple as string
+    userId as string,
+    coupleId as string
   )
   res.status(200).json(movies)
 }
 
 const ratingMovie = async (req: Request, res: Response) => {
-  const movieId = req.params.movieId
-  const idcouple = req.params.coupleId
-  const { rating, opinion, userId } = req.body
+  const { coupleId, movieId } = req.params
+  const userId = req.session?.user?.id
+  const { rating, opinion } = req.body
 
   await coupleMovieService.ratingMovie(
-    userId,
-    idcouple as string,
+    userId as string,
+    coupleId as string,
     movieId as string,
     rating,
     opinion
