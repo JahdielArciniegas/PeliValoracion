@@ -65,7 +65,6 @@ describe('get code couple', () => {
     cookie = loginResponse.headers['set-cookie']
 
     const response = await api.post('/api/couple/code').set('Cookie', cookie)
-    console.log('response', response)
 
     expect(response.status).toBe(201)
     expect(response.body).toHaveProperty('id')
