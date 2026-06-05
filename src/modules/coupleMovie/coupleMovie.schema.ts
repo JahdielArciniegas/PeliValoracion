@@ -25,7 +25,7 @@ export const coupleMovieCreateSchema = z.object({
 })
 
 export const coupleMovieRateSchema = z.object({
-  body: ratingSchema,
+  body: ratingSchema.omit({ userId: true }),
   params: z.object({
     coupleId: z.string(),
     movieId: z.string(),
