@@ -31,22 +31,25 @@ const create = async (name: string, email: string, password: string) => {
   return userCreate
 }
 
-const getOne = async (id: string | undefined) => {
+const getOne = async (id: string, userId: string) => {
   if (!id) throw new ValidationError('User id is required')
-  if (!Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
     throw new ValidationError('User ID is not valid')
   }
+  if (id !== userId) throw new UnauthorizedError('User ID is not valid')
+
   await dbConnect()
   const user = await userRepositories.getOneById(id)
   if (!user) throw new NotFoundError('User not found')
   return user
 }
 
-const update = async (id: string | undefined, user: UserUpdate) => {
+const update = async (id: string, user: UserUpdate, userId: string) => {
   if (!id) throw new UnauthorizedError('Id is required for update')
-  if (!Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
     throw new ValidationError('User ID is not valid')
   }
+  if (id !== userId) throw new UnauthorizedError('User ID is not valid')
   await dbConnect()
   if (!user.email) throw new ValidationError('Email is required')
   const userExist = await userRepositories.getOneById(id)
@@ -63,11 +66,12 @@ const update = async (id: string | undefined, user: UserUpdate) => {
   return userUpdate
 }
 
-const remove = async (id: string | undefined) => {
+const remove = async (id: string, userId: string) => {
   if (!id) throw new UnauthorizedError('Id is required for remove')
-  if (!Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
     throw new ValidationError('User ID is not valid')
   }
+  if (id !== userId) throw new UnauthorizedError('User ID is not valid')
   await dbConnect()
   const userExist = await userRepositories.getOneById(id)
   if (!userExist) throw new NotFoundError('User not found')
