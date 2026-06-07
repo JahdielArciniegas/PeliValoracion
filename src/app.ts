@@ -11,6 +11,7 @@ import path from 'node:path'
 import rateLimiter from './shared/middleware/rateLimiting.js'
 import authRoutes from './modules/auth/auth.routes.js'
 import verifyToken from './shared/middleware/verifyToken.js'
+import cors from 'cors'
 const { default: swaggerDocument } = await import(
   './shared/swagger/swagger.json',
   {
@@ -29,6 +30,12 @@ const options = {
   ],
 }
 const app = express()
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  })
+)
 app.use(rateLimiter)
 app.use(express.json())
 app.set('view engine', 'ejs')
