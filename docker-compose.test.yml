@@ -1,0 +1,36 @@
+services:
+  pelivalo-test:
+    image: pelivalo-test
+    container_name: pelivalo-api-test
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - '3004:3003'
+    environment:
+      - NODE_ENV=test
+      - MONGO_URL=mongodb://mongodb-test:27017/pelivalo_test
+      - REDIS_URL=http://serverless-redis-http-test:80
+      - REDIS_TOKEN=testsecreto
+      - API_KEY=${API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    command: npm run test
+    depends_on:
+      - mongodb-test
+      - redis-test
+  mongodb-test:
+    image: mongo
+    container_name: mongodb-test
+  redis-test:
+    image: redis:8.4.2-alpine3.22
+    container_name: redis-test
+  serverless-redis-http-test:
+    image: hiett/serverless-redis-http:latest
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: testsecreto
+      SRH_CONNECTION_STRING: 'redis://redis-test:6379'
+    depends_on:
+      - redis-test
