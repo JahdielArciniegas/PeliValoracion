@@ -13,9 +13,10 @@ let cached = (global as any).mongoose
 if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null }
 }
+
 async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection
   }
 
   if (!cached.promise) {
@@ -25,11 +26,12 @@ async function dbConnect() {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     }
+
     cached.promise = mongoose
       .connect(MONGO_URL as string, options)
-      .then((mongoose) => {
+      .then((mongooseInstance) => {
         console.log('MongoDB conectado')
-        return mongoose.connect
+        return mongooseInstance
       })
   }
 
